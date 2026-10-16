@@ -14,7 +14,7 @@ A policy.md starts with a front matter block, then a small Markdown subset:
     ---
     name: Arrow-Rama                              # the app's name, as the index lists it
     blurb: A puzzle game for Android and Wear OS  # the subheadline under the title, and the line under the name on the index
-    updated: 16 October 2026                      # shown as "Last updated" in the header, after "Made by the Sandberg family"
+    updated: 16 October 2026                      # shown as "Last updated" in the header
     order: 10                                     # optional: lower first on the index (default: by name)
     ---
     # Title                  one per page, first: the headline in the page header (it is not repeated in the body)
@@ -73,7 +73,7 @@ ul.apps a{display:block;padding:1rem 0;text-decoration:none;color:var(--ink)}
 ul.apps b{display:block;font:400 1.6rem/1.2 var(--serif);color:var(--link);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.2em}
 ul.apps a:hover b{text-decoration-thickness:2px}
 ul.apps span{color:var(--muted)}
-.hem{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 24px;padding:14px var(--gutter) 20px;font-size:16px;color:var(--muted);border-top:1px solid var(--rule)}
+.hem{display:flex;flex-wrap:wrap;justify-content:flex-start;gap:6px 24px;padding:14px var(--gutter) 20px;font-size:16px;color:var(--muted);border-top:1px solid var(--rule)}
 .hem nav{display:flex;flex-wrap:wrap;gap:6px 20px}
 .hem a{color:var(--muted)}
 @media (max-width:640px){.badge{--s:54px}}
@@ -131,7 +131,6 @@ PAGE = """\
 </main>
 
 <footer class="hem">
-  <span>The Sandberg family</span>
   <nav aria-label="Elsewhere">
 {nav}
   </nav>
@@ -242,7 +241,7 @@ def build():
     mail = f'<a href="mailto:{CONTACT}">{CONTACT}</a>'
     for slug, meta, title, body in apps:
         nav = ['<a href="/">All policies</a>', f'<a href="{HOME}">pdxfixit.com</a>', mail]
-        head = intro(title, meta["blurb"], f'{MADE_BY} \u00b7 Last updated {meta["updated"]}')
+        head = intro(title, meta["blurb"], f'Last updated {meta["updated"]}')
         pages[f"{slug}/index.html"] = render(title, f'{meta["name"]}: {meta["blurb"]}. {title}.', head, body, nav)
     apps.sort(key=lambda a: (int(a[1].get("order", 1000)), a[1]["name"].lower()))
     items = "\n".join(f'    <li><a href="/{s}/"><b>{esc(m["name"])}</b><span>{esc(m["blurb"])}</span></a></li>'
