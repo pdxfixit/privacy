@@ -94,8 +94,9 @@ ul.apps span{color:var(--muted)}
 <footer class="hem">
   <nav aria-label="Elsewhere">
     <a href="https://pdxfixit.com/">pdxfixit.com</a>
-    <a href="mailto:privacy@pdxfixit.com">privacy@pdxfixit.com</a>
+    <span class="contact" data-c="bW9jLnRpeGlmeGRwQHljYXZpcnA=">privacy at pdxfixit dot com</span>
   </nav>
 </footer>
+<script>for(const e of document.querySelectorAll("[data-c]")){const a=atob(e.dataset.c).split("").reverse().join(""),l=document.createElement("a");l.href="mailto:"+a;l.textContent=a;e.replaceChildren(l)}</script>
 </body>
 </html>

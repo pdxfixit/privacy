@@ -115,20 +115,21 @@ ul.apps span{color:var(--muted)}
 <ul>
 <li><strong>On your watch:</strong> uninstall Orbit. To remove the backup copy too, delete it in your Google account's backup settings.</li>
 <li><strong>Usage data:</strong> turn Share play data off to stop sending more. We can't tell which records are yours: the code is never shown and is linked to nothing else. It is removed after one year anyway.</li>
-<li><strong>Questions or requests:</strong> write to <a href="mailto:privacy@pdxfixit.com">privacy@pdxfixit.com</a>.</li>
+<li><strong>Questions or requests:</strong> write to <span class="contact" data-c="bW9jLnRpeGlmeGRwQHljYXZpcnA=">privacy at pdxfixit dot com</span>.</li>
 </ul>
 <h2>Changes</h2>
 <p>If this policy changes, we update this page and the date at the top.</p>
 <h2>Contact</h2>
-<p>The Sandberg family. <a href="mailto:privacy@pdxfixit.com">privacy@pdxfixit.com</a></p>
+<p>The Sandberg family. <span class="contact" data-c="bW9jLnRpeGlmeGRwQHljYXZpcnA=">privacy at pdxfixit dot com</span></p>
 </main>
 
 <footer class="hem">
   <nav aria-label="Elsewhere">
     <a href="/">All policies</a>
     <a href="https://pdxfixit.com/">pdxfixit.com</a>
-    <a href="mailto:privacy@pdxfixit.com">privacy@pdxfixit.com</a>
+    <span class="contact" data-c="bW9jLnRpeGlmeGRwQHljYXZpcnA=">privacy at pdxfixit dot com</span>
   </nav>
 </footer>
+<script>for(const e of document.querySelectorAll("[data-c]")){const a=atob(e.dataset.c).split("").reverse().join(""),l=document.createElement("a");l.href="mailto:"+a;l.textContent=a;e.replaceChildren(l)}</script>
 </body>
 </html>

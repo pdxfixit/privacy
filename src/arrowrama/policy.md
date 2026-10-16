@@ -22,6 +22,6 @@ We are the Sandberg family. We make small apps: Arrow-Rama, Isopix, Noodle Pads 
 
 - **On your device:** uninstall the game. To remove the phone's backup copy too, delete it in your Google account's backup settings.
 - **Usage data:** turn Share play data off to stop sending more. We can't tell which records are yours: the code is never shown and is linked to nothing else. It is removed after one year anyway.
-- **Questions or requests:** write to [privacy@pdxfixit.com](mailto:privacy@pdxfixit.com).
+- **Questions or requests:** write to {contact}.
 
 @include closing
