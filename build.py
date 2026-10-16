@@ -87,7 +87,7 @@ FILTER = """\
 
 BADGE = """\
   <div class="badge">
-    <a href="__HOME__" aria-label="PDXfixIT home">
+    <a href="/" aria-label="PDXfixIT privacy policies">
       <svg viewBox="44 59 720 246" role="img" aria-label="PDXfixIT">
         <defs>
           <image id="art" x="44" y="59" width="720" height="201" href="/logo-art.webp"/>
@@ -103,7 +103,7 @@ BADGE = """\
       </svg>
     </a>
   </div>
-""".replace("__HOME__", HOME)
+"""
 
 PAGE = """\
 <!doctype html>
