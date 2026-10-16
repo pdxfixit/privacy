@@ -1,6 +1,6 @@
 # Arrow-Rama privacy policy
 
-Privacy policies for PDX FixIT apps, served at https://privacy.pdxfixit.com/ by a Cloudflare Worker (static assets
+Privacy policies for PDXfixIT apps, served at https://privacy.pdxfixit.com/ by a Cloudflare Worker (static assets
 only). One folder per app under `public/`; `public/index.html` is the index that links to each.
 
 - Arrow-Rama (Android and Wear OS puzzle game): https://privacy.pdxfixit.com/arrowrama/
