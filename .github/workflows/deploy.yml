@@ -1,7 +1,7 @@
 # Deploys https://privacy.pdxfixit.com on every push to main, like pdxfixit/website: this
 # repo's own Cloudflare token (Workers Scripts: Edit; pdxfixit.com: Workers Routes: Edit,
 # DNS: Edit, Zone: Read). No agent holds a token. Steps: wrangler deploy through
-# flarepress, then site/verify.sh (the host serves public/index.html byte for byte, and
+# flarepress, then site/verify.sh (the host serves every public/**/index.html byte for byte, and
 # the CSP matches _headers).
 #
 # Secrets: CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID.
