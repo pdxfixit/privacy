@@ -23,6 +23,15 @@ A policy.md starts with a front matter block, then a small Markdown subset:
     - a list item, one line each
 
 Links may go to https:, mailto: or a path on this site; anything else is an error.
+
+Shared text, written once: src/_shared/<name>.md holds blocks every app uses (the same Markdown subset, with front
+matter `updated:` only, no '# Title', no @include). A policy pulls one in with a line of its own:
+
+    @include rules
+
+A page's "Last updated" is the newest of its own `updated:` and the `updated:` of every partial it includes, so
+changing shared text and bumping the partial's date updates every page that includes it. An app's own sections stay
+in its policy.md.
 """
 import html, re, sys
 from pathlib import Path
@@ -170,28 +179,75 @@ def inline(text, where):
     return t
 
 
-def parse(path):
+MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October",
+          "November", "December"]
+
+
+def parse_date(text, where):
+    m = re.fullmatch(r"(\d{1,2}) (%s) (\d{4})" % "|".join(MONTHS), text)
+    if not m:
+        fail(f"{where}: updated: {text!r} is not a date like '16 October 2026'")
+    return int(m.group(3)), MONTHS.index(m.group(2)) + 1, int(m.group(1))
+
+
+def show_date(d):
+    return f"{d[2]} {MONTHS[d[1] - 1]} {d[0]}"
+
+
+def front_matter(path, allowed, required):
+    where = str(path.relative_to(ROOT))
     raw = path.read_text(encoding="utf-8")
     m = re.match(r"---\n(.*?)\n---\n(.*)", raw, re.S)
     if not m:
-        fail(f"{path.relative_to(ROOT)}: no front matter block")
+        fail(f"{where}: no front matter block")
     meta = {}
     for line in m.group(1).splitlines():
         line = re.sub(r"\s+#.*$", "", line)
         k, sep, v = line.partition(":")
         if not sep:
-            fail(f"{path.relative_to(ROOT)}: bad front matter line {line!r}")
+            fail(f"{where}: bad front matter line {line!r}")
         meta[k.strip()] = v.strip()
-    for k in ("name", "blurb", "updated"):
+    for k in required:
         if not meta.get(k):
-            fail(f"{path.relative_to(ROOT)}: front matter needs {k}")
-    unknown = set(meta) - {"name", "blurb", "updated", "order"}
+            fail(f"{where}: front matter needs {k}")
+    unknown = set(meta) - set(allowed)
     if unknown:
-        fail(f"{path.relative_to(ROOT)}: unknown front matter {sorted(unknown)}")
-    where = str(path.relative_to(ROOT))
-    blocks = [b for b in re.split(r"\n\s*\n", m.group(2).strip("\n")) if b.strip()]
-    out, title = [], None
+        fail(f"{where}: unknown front matter {sorted(unknown)}")
+    return meta, [b for b in re.split(r"\n\s*\n", m.group(2).strip("\n")) if b.strip()], where
+
+
+def load_shared(name, where):
+    """A shared partial, src/_shared/<name>.md: front matter `updated`, then blocks. Returns (date, blocks)."""
+    path = SRC / "_shared" / f"{name}.md"
+    if not path.is_file():
+        fail(f"{where}: @include {name}: there is no src/_shared/{name}.md")
+    meta, blocks, pwhere = front_matter(path, {"updated"}, ("updated",))
     for b in blocks:
+        first = b.strip("\n").splitlines()[0]
+        if first.startswith("# ") or first.startswith("@include"):
+            fail(f"{pwhere}: a shared partial has no '# Title' and no @include: {first[:50]!r}")
+    return parse_date(meta["updated"], pwhere), blocks
+
+
+def parse(path):
+    meta, blocks, where = front_matter(path, {"name", "blurb", "updated", "order"}, ("name", "blurb", "updated"))
+    date = parse_date(meta["updated"], where)
+    expanded = []
+    for b in blocks:
+        lines = b.strip("\n").splitlines()
+        inc = re.fullmatch(r"@include ([a-z0-9-]+)", b.strip())
+        if inc:
+            pdate, pblocks = load_shared(inc.group(1), where)
+            date = max(date, pdate)
+            expanded += pblocks
+        elif any(l.startswith("@include") for l in lines):
+            fail(f"{where}: an '@include name' is a line of its own, with blank lines around it")
+        else:
+            expanded.append(b)
+    # the page is as new as the newest of its own text and the shared text it includes
+    meta["updated"] = show_date(date)
+    out, title = [], None
+    for b in expanded:
         lines = b.strip("\n").splitlines()
         if lines[0].startswith("# "):
             if title or len(lines) != 1:

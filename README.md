@@ -17,6 +17,7 @@ consistent with each other and with pdxfixit.com, and no app repo needs a page g
 
 ```
 src/<app>/policy.md      the policy text for one app (the only thing an app changes)
+src/_shared/<name>.md    text shared by every app's policy, included with `@include <name>`
 build.py                 src/ -> public/<app>/index.html and public/index.html
 public/                  what is deployed: built pages, plus files kept by hand (below)
 site/wrangler.toml       the Worker and its custom domain
@@ -26,9 +27,27 @@ site/verify.sh           after a deploy, checks the live site matches public/
 
 ### Change a policy
 
-1. Edit `src/<app>/policy.md`, and set `updated:` in its front matter to the new date.
+1. Edit `src/<app>/policy.md` (an app's own sections), or `src/_shared/<name>.md` (text every app shares, below), and
+   set `updated:` in that file's front matter to the new date.
 2. Run `python3 build.py` and commit `src/` and `public/` together.
 3. Push to `main`. The deploy does the rest.
+
+### Shared text
+
+Text every app shares is written once, in `src/_shared/`:
+
+```
+src/_shared/rules.md      the rules every app follows, how long we keep data, children
+src/_shared/closing.md    changes and contact
+src/arrowrama/policy.md   its own intro, what the game sends, deleting data; includes the two above
+```
+
+A policy includes a partial with a line of its own, with blank lines around it: `@include rules`. A partial is the
+same Markdown subset with front matter `updated:` only; it has no `# Title` and no `@include` of its own.
+
+A page's "Last updated" is the newest of its own `updated:` and the `updated:` of each partial it includes. So
+changing a shared file and bumping its date updates every app's page together, and no page can show a date older
+than the shared text it carries. A section only one app has stays in that app's `policy.md`.
 
 Never edit `public/<app>/index.html` or `public/index.html` by hand. The deploy runs `python3 build.py --check` first
 and fails if `public/` is not exactly what `src/` builds.
@@ -56,6 +75,7 @@ A paragraph with **bold**, *italic* and a [link](https://example.com).
 ```
 
 Links may go to `https:`, `mailto:` or a path on this site. A heading is one line, and a list is only `- ` lines.
+A line `@include name` on its own pulls in `src/_shared/name.md`.
 
 ### Preview locally
 
