@@ -1,0 +1,18 @@
+{
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	// Static-assets Worker, no script: Cloudflare serves the files in "directory".
+	// index.html stays at the repo root (the policy build publishes it there);
+	// .assetsignore keeps everything that is not the site out of the upload.
+	"name": "privacy-pdxfixit-com",
+	"compatibility_date": "2026-10-16",
+	"assets": {
+		"directory": ".",
+		"html_handling": "auto-trailing-slash",
+		"not_found_handling": "404-page"
+	},
+	// The first deploy creates the DNS record and certificate for this name.
+	// pdxfixit.com must be a zone in the same Cloudflare account.
+	"routes": [{ "pattern": "privacy.pdxfixit.com", "custom_domain": true }],
+	"workers_dev": false,
+	"preview_urls": false
+}
