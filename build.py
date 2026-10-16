@@ -6,6 +6,10 @@ as src/<app>/policy.md; it does not ship a page.
 
     python3 build.py          # write public/ (the pages and _headers; the logo, font and favicon are kept by hand)
     python3 build.py --check  # build in memory and fail if public/ differs: CI runs this before deploying
+    python3 build.py --stamp SHA  # write the commit into the footer of every page in public/ (the deploy does this; never commit it)
+
+The footer's lower-right corner shows the short commit that was deployed, linked to it on GitHub. A commit cannot
+contain its own hash, so public/ holds the placeholder BUILD_SHA and the deploy swaps it for the real one.
 
 Stdlib only, no network. The output is byte-for-byte the same every run.
 
@@ -100,6 +104,7 @@ ul.apps span{color:var(--muted)}
 .hem{display:flex;flex-wrap:wrap;justify-content:flex-start;gap:6px 24px;padding:14px var(--gutter) 20px;font-size:16px;color:var(--muted);border-top:1px solid var(--rule)}
 .hem nav{display:flex;flex-wrap:wrap;gap:6px 20px}
 .hem a{color:var(--muted)}
+.hem .build{margin-left:auto;align-self:flex-end;font:12px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace}
 @media (max-width:640px){.badge{--s:54px}}
 """
 
@@ -158,6 +163,7 @@ PAGE = """\
   <nav aria-label="Elsewhere">
 {nav}
   </nav>
+  <a class="build" href="https://github.com/pdxfixit/privacy/commit/BUILD_SHA"{newtab} title="The version of this site">BUILD_SHA</a>
 </footer>
 <script>{script}</script>
 </body>
@@ -334,7 +340,7 @@ def intro(headline, sub, made):
 
 def render(title, description, head, main, nav):
     return PAGE.format(title=esc(title), description=attr(description), css=CSS, filter=FILTER, badge=BADGE,
-                       intro=head, main=main, script=SCRIPT, nav="\n".join(f"    {n}" for n in nav))
+                       intro=head, main=main, script=SCRIPT, newtab=NEWTAB, nav="\n".join(f"    {n}" for n in nav))
 
 
 # An address off this site opens in a new tab (the owner, 2026-10-16); noopener keeps the new page from reaching this one.
@@ -395,7 +401,24 @@ def build():
     return pages
 
 
+def stamp(sha):
+    """Swap the BUILD_SHA placeholder in every page of public/ for the short commit (the deploy's job, on its own checkout)."""
+    if not re.fullmatch(r"[0-9a-f]{7,40}", sha):
+        sys.exit("--stamp takes a commit hash (7 to 40 hex digits)")
+    n = 0
+    for p in PUBLIC.rglob("*.html"):
+        text = p.read_text(encoding="utf-8")
+        if "BUILD_SHA" in text:
+            p.write_text(text.replace("BUILD_SHA", sha[:7]), encoding="utf-8")
+            n += 1
+    print(f"✅ stamped {sha[:7]} into {n} pages")
+
+
 def main():
+    if sys.argv[1:2] == ["--stamp"]:
+        if len(sys.argv) != 3:
+            sys.exit(__doc__)
+        return stamp(sys.argv[2])
     left = (datetime.datetime.strptime(SECURITY_EXPIRES[:10], "%Y-%m-%d").date() - datetime.date.today()).days
     if left < 60:
         print(f"⚠️ security.txt Expires is {'past' if left < 0 else 'in ' + str(left) + ' days'}: move SECURITY_EXPIRES forward")

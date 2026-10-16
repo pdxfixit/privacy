@@ -55,6 +55,7 @@ ul.apps span{color:var(--muted)}
 .hem{display:flex;flex-wrap:wrap;justify-content:flex-start;gap:6px 24px;padding:14px var(--gutter) 20px;font-size:16px;color:var(--muted);border-top:1px solid var(--rule)}
 .hem nav{display:flex;flex-wrap:wrap;gap:6px 20px}
 .hem a{color:var(--muted)}
+.hem .build{margin-left:auto;align-self:flex-end;font:12px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace}
 @media (max-width:640px){.badge{--s:54px}}
 </style>
 </head>
@@ -102,6 +103,7 @@ ul.apps span{color:var(--muted)}
     <a href="https://pdxfixit.com/" target="_blank" rel="noopener noreferrer">pdxfixit.com</a>
     <span class="contact" data-c="bW9jLnRpeGlmeGRwQHljYXZpcnA=">privacy at pdxfixit dot com</span>
   </nav>
+  <a class="build" href="https://github.com/pdxfixit/privacy/commit/BUILD_SHA" target="_blank" rel="noopener noreferrer" title="The version of this site">BUILD_SHA</a>
 </footer>
 <script>for(const e of document.querySelectorAll("[data-c]")){const a=atob(e.dataset.c).split("").reverse().join(""),l=document.createElement("a");l.href="mailto:"+a;l.textContent=a;e.replaceChildren(l)}</script>
 </body>

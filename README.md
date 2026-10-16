@@ -110,6 +110,13 @@ rewritten.
 - **Verified after every deploy:** `site/verify.sh` checks every page and `security.txt` byte for byte, with the
   CSP header.
 
+### The version in the footer
+
+The lower-right corner of every page shows the short commit that was deployed, linked to it on GitHub. A commit cannot
+contain its own hash, so `public/` holds the placeholder `BUILD_SHA` and the deploy runs `python3 build.py --stamp "$GITHUB_SHA"`
+on its own checkout before it uploads (`site/verify.sh` then compares the live pages with the stamped files). Never commit
+a stamped `public/`: `build.py --check` fails on it. To deploy by hand, stamp first.
+
 ### Preview locally
 
 ```
