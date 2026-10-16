@@ -101,13 +101,14 @@ Three files in `public/` are kept by hand and shared by every page:
 ### On the owner's Mac: the flarepress registry
 
 flarepress's `just sites` (a read-only health check of every site) only sees site folders under
-`~/.config/flarepress/sites/` (`$FLAREPRESS_SITES`). A name there may be a link to an app repo's `site/` folder. To
-include this site:
+`~/.config/flarepress/sites/` (`$FLAREPRESS_SITES`). To register this one, from a flarepress checkout:
 
 ```
-ln -s /path/to/this/repo/site ~/.config/flarepress/sites/privacy.pdxfixit.com
-just sites privacy.pdxfixit.com           # from a flarepress checkout
+just link /path/to/this/repo/site         # a link named privacy.pdxfixit.com, from the site's first route
+just sites privacy.pdxfixit.com
 ```
+
+`just link` is safe to run again, and `just unlink privacy.pdxfixit.com` removes the link.
 
 A folder without a `site.conf` is checked only for `/` answering 200; this site has no `site.conf`, so it is not
 asked for `/version.json`.
