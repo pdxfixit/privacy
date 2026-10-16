@@ -21,4 +21,7 @@ break and that CI or a reader will catch.
 - **Never write the contact email address in plain text** (a policy, a README, a comment, a commit message you can
   avoid): write `{contact}` in a policy. The site hides it from spam harvesters and `build.py` refuses a plain address
   or a `mailto:` link. Do not add a plain `mailto:` link or another address by another route.
+- **Do not add another origin, script or third-party request** (fonts, analytics, a CDN, an embed). The pages load
+  nothing but their own files; the CSP in the generated `_headers` allows exactly that. The policies tell people so.
+- **Keep `SECURITY_EXPIRES` in `build.py` in the future** (`security.txt`); `build.py` warns in its last 60 days.
 - **Push to `main`.** A push deploys. Check the run (the `deploy` workflow) before saying a change is live.

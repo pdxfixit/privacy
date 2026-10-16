@@ -91,6 +91,24 @@ The script is allowed by its hash in the CSP (`script-src 'sha256-...'`), so `pu
 people who read the address off the page and type it, and copies already in the git history, which is public and not
 rewritten.
 
+### Security hardening
+
+- **Headers** (`public/_headers`, generated): a strict CSP (no other origins), `Permissions-Policy` denying camera,
+  microphone, location, payment and sensors, `Cross-Origin-Opener-Policy` and `Cross-Origin-Resource-Policy`
+  `same-origin`, `nosniff`, no-cache. **HSTS is not set here:** turn it on once for the whole zone in Cloudflare
+  (SSL/TLS, Edge Certificates), so every subdomain gets the same policy.
+- **`/.well-known/security.txt`** (RFC 9116, generated): its contact is a link to this repo's private vulnerability
+  reporting (GitHub: Settings, Security, "Private vulnerability reporting"; turn it on), not an email address.
+  `Expires` is a constant in `build.py` (`SECURITY_EXPIRES`): move it forward at least yearly. `build.py` warns in the
+  last 60 days.
+- **No second public address:** `workers_dev = false` and `preview_urls = false` in `site/wrangler.toml`, so the site
+  is only on its custom domain.
+- **Workflow:** actions are pinned by commit (with the tag in a comment), and `persist-credentials: false` leaves no
+  token in `.git/config`. flarepress is checked out at its rolling `v1` tag by decision; pin a commit instead if a
+  compromised flarepress ever becomes the bigger worry.
+- **Verified after every deploy:** `site/verify.sh` checks every page and `security.txt` byte for byte, with the
+  CSP header.
+
 ### Preview locally
 
 ```

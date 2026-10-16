@@ -1,0 +1,4 @@
+Contact: https://github.com/pdxfixit/privacy/security/advisories/new
+Expires: 2027-10-16T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://privacy.pdxfixit.com/.well-known/security.txt

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# After a deploy: privacy.pdxfixit.com serves every public/**/index.html byte for byte
+# After a deploy: privacy.pdxfixit.com serves every public/**/index.html and public/.well-known/security.txt byte for byte
 # (public/index.html at /, public/arrowrama/index.html at /arrowrama/, ...), and the
 # CSP header is the one public/_headers sets (both must match in the same fetch). Read-only GETs. Exit 1 names what failed.
 #
@@ -18,7 +18,8 @@ trap 'rm -f "$page" "$hdrs"' EXIT
 bad=0
 host=privacy.pdxfixit.com
 while IFS= read -r file; do
-  rel=${file#public/} url=/${rel%index.html}
+  rel=${file#public/}
+  case "$rel" in *index.html) url=/${rel%index.html} ;; *) url=/$rel ;; esac
   run=0 hits=0 tries=0 start=$SECONDS
   while [ "$run" -lt "$need" ] && [ $((SECONDS - start)) -lt "$budget" ]; do
     tries=$((tries + 1))
@@ -38,5 +39,5 @@ while IFS= read -r file; do
     echo "❌ $host$url did not settle on $file and its CSP: $hits of $tries fetches matched in ${took}s, never $need in a row"
     bad=1
   fi
-done < <(find public -name index.html | sort)
+done < <({ find public -name index.html; echo public/.well-known/security.txt; } | sort)
 exit $bad
