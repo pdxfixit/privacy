@@ -17,7 +17,7 @@ We are the Sandberg family. We make small apps: Arrow-Rama, Isopix, Noodle Pads 
 - **Sent to us**, while a player's **Share play data** is on (Settings, Sound & haptics; on to start with): the play log, every few hours. Boards, taps and their timing, and settings such as font size, with the player's random code.
 - **Not sent:** player names and pictures, which stay on your devices.
 - **Your own copies:** your phone and watch copy game data to each other through Google Play services. If Android backup is on, your phone's save goes into your own Google account's backup. We can't see either.
-- **Permissions:** vibrate; the watch also keeps the screen awake while you play. Play builds use the internet only to send the play log. On the watch, voice search uses the watch's own speech service; the game gets only the text. The game's sounds include a few short clips our family recorded; the game never records you.
+- **Permissions:** vibrate; the watch also keeps the screen awake while you play. The game uses the internet only to send the play log. On the watch, voice search uses the watch's own speech service; the game gets only the text. The game's sounds include a few short clips our family recorded; the game never records you.
 
 ## Deleting your data
 
