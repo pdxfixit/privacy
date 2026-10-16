@@ -216,7 +216,7 @@ def inline(text, where):
         label, url = m.group(1), html.unescape(m.group(2))
         if not (url.startswith("https://") or re.fullmatch(r"/[A-Za-z0-9_./-]*", url)):
             fail(f"{where}: link to {url!r}: only https: and paths on this site are allowed")
-        return f'<a href="{attr(url)}">{label}</a>'
+        return f'<a href="{attr(url)}"{NEWTAB if url.startswith("https://") else ""}>{label}</a>'
 
     t = re.sub(r"\[([^\]]+)\]\(([^)\s]+)\)", link, t)
     t = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", t)
@@ -337,6 +337,9 @@ def render(title, description, head, main, nav):
                        intro=head, main=main, script=SCRIPT, nav="\n".join(f"    {n}" for n in nav))
 
 
+# An address off this site opens in a new tab (the owner, 2026-10-16); noopener keeps the new page from reaching this one.
+NEWTAB = ' target="_blank" rel="noopener noreferrer"'
+
 # Icons for the index buttons, as SVG so they centre exactly (an emoji glyph sits off-centre in its line box).
 GLOBE = ('<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6" '
          'stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/>'
@@ -357,7 +360,7 @@ def get_link(meta):
         return f'<span class="go soon" role="img" aria-label="{esc(label)}" title="{esc(label)}">{PLAY}</span>'
     play = url.startswith("https://play.google.com/")
     label = f'Get {meta["name"]} on Google Play' if play else f'Open {meta["name"]}'
-    return f'<a class="go" href="{esc(url)}" aria-label="{esc(label)}" title="{esc(label)}">{PLAY if play else GLOBE}</a>'
+    return f'<a class="go" href="{esc(url)}"{NEWTAB} aria-label="{esc(label)}" title="{esc(label)}">{PLAY if play else GLOBE}</a>'
 
 
 def build():
@@ -373,7 +376,7 @@ def build():
     pages = {}
     mail = contact_html()
     for slug, meta, title, body in apps:
-        nav = ['<a href="/">All policies</a>', f'<a href="{HOME}">pdxfixit.com</a>', mail]
+        nav = ['<a href="/">All policies</a>', f'<a href="{HOME}"{NEWTAB}>pdxfixit.com</a>', mail]
         head = intro(title, meta["blurb"], f'Last updated {meta["updated"]}')
         pages[f"{slug}/index.html"] = render(title, f'{meta["name"]}: {meta["blurb"]}. {title}.', head, body, nav)
     # The index is alphabetical by name, always: there is no way to set an order, so it cannot be put out of order.
@@ -383,7 +386,7 @@ def build():
     index = f'<ul class="apps">\n{items}\n</ul>'
     head = intro("Privacy policies", "What each app keeps, what it sends, and how to delete it.", MADE_BY)
     pages["index.html"] = render("PDXfixIT privacy policies", "The privacy policy for each app the Sandberg family makes.",
-                                 head, index, [f'<a href="{HOME}">pdxfixit.com</a>', mail])
+                                 head, index, [f'<a href="{HOME}"{NEWTAB}>pdxfixit.com</a>', mail])
     for rel, text in pages.items():
         if EMAIL.search(text):
             fail(f"public/{rel} would contain a plain email address: use {{contact}}")
