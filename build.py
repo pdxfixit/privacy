@@ -13,11 +13,11 @@ A policy.md starts with a front matter block, then a small Markdown subset:
 
     ---
     name: Arrow-Rama                              # the app's name, as the index lists it
-    blurb: A puzzle game for Android and Wear OS  # one line under the name on the index
-    updated: 16 October 2026                      # shown as "Last updated" under the title
+    blurb: A puzzle game for Android and Wear OS  # the subheadline under the title, and the line under the name on the index
+    updated: 16 October 2026                      # shown as "Last updated" in the header, after "Made by the Sandberg family"
     order: 10                                     # optional: lower first on the index (default: by name)
     ---
-    # Title                  one per page, first
+    # Title                  one per page, first: the headline in the page header (it is not repeated in the body)
     ## Heading
     A paragraph. **bold**, *italic*, [a link](https://example.com) or [mail](mailto:a@b.c)
     - a list item, one line each
@@ -53,19 +53,19 @@ body{margin:0;min-height:100svh;display:grid;grid-template-rows:auto 1fr auto;gr
 ::selection{background:var(--orange);color:#24170F}
 a{color:var(--link)}
 :focus-visible{outline:2px solid currentColor;outline-offset:4px;border-radius:4px}
-.shoulder{padding:clamp(22px,5.5vh,56px) var(--gutter) 0}
-.badge{--s:clamp(58px,5.4vw,80px);width:max-content;margin:0;line-height:0}
+.top{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px clamp(16px,4vw,48px);align-items:start;
+  padding:clamp(22px,5.5vh,56px) var(--gutter) 0}
+.intro{max-width:46rem}
+.badge{--s:clamp(58px,5.4vw,80px);width:max-content;margin:0;line-height:0;justify-self:end}
 .badge a{display:block;border-radius:4px}
 .badge svg{display:block;height:calc(var(--s) * 246 / 305);width:calc(var(--s) * 720 / 305)}
 .badge .wordmark{filter:var(--wordmark-filter)}
-main{align-self:start;width:100%;max-width:46rem;padding:clamp(28px,6vh,72px) var(--gutter)}
-main.index{align-self:center}
-h1{font:340 clamp(2.2rem,6vw,3.6rem)/1.06 var(--serif);letter-spacing:-.022em;margin:0 0 .75rem}
-main.index h1{font-size:clamp(2.4rem,7.5vw,4.6rem);line-height:1.02;margin-bottom:1rem}
+main{align-self:start;width:100%;max-width:46rem;padding:clamp(20px,4vh,40px) var(--gutter) clamp(28px,6vh,72px)}
+h1{font:340 clamp(2rem,5.2vw,3.6rem)/1.06 var(--serif);letter-spacing:-.022em;margin:0 0 .6rem}
+.sub{font-size:clamp(1.1rem,2.4vw,1.4rem);line-height:1.3;margin:0 0 .5rem}
+.made{color:var(--muted);font-size:1rem;margin:0}
 h2{font:400 1.5rem/1.25 var(--serif);margin:2.25rem 0 .5rem}
 p{margin:.75rem 0}
-.updated{color:var(--muted);margin:0 0 1.5rem}
-.lede{color:var(--muted);margin:0 0 2rem;max-width:32rem}
 main ul{padding-left:1.25rem}
 main li{margin:.5rem 0}
 ul.apps{list-style:none;margin:0;padding:0;border-top:1px solid var(--rule)}
@@ -77,14 +77,16 @@ ul.apps span{color:var(--muted)}
 .hem{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 24px;padding:14px var(--gutter) 20px;font-size:16px;color:var(--muted);border-top:1px solid var(--rule)}
 .hem nav{display:flex;flex-wrap:wrap;gap:6px 20px}
 .hem a{color:var(--muted)}
+@media (max-width:640px){.badge{--s:50px}}
 """
 
-BADGE = """\
+FILTER = """\
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
 <filter id="to-white" color-interpolation-filters="sRGB"><feColorMatrix values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1 0"/></filter>
 </defs></svg>
+"""
 
-<header class="shoulder">
+BADGE = """\
   <div class="badge">
     <a href="__HOME__" aria-label="PDXfixIT home">
       <svg viewBox="44 59 720 246" role="img" aria-label="PDXfixIT">
@@ -102,7 +104,6 @@ BADGE = """\
       </svg>
     </a>
   </div>
-</header>
 """.replace("__HOME__", HOME)
 
 PAGE = """\
@@ -119,13 +120,19 @@ PAGE = """\
 {css}</style>
 </head>
 <body>
-{badge}
-<main{main_class}>
+{filter}
+<header class="top">
+  <div class="intro">
+{intro}
+  </div>
+{badge}</header>
+
+<main>
 {main}
 </main>
 
 <footer class="hem">
-  <span>PDXfixIT &middot; Portland, Oregon</span>
+  <span>The Sandberg family</span>
   <nav aria-label="Elsewhere">
 {nav}
   </nav>
@@ -192,8 +199,7 @@ def parse(path):
             if title or len(lines) != 1:
                 fail(f"{where}: one '# Title' line, first, on its own")
             title = lines[0][2:].strip()
-            out.append(f"<h1>{inline(title, where)}</h1>")
-            out.append(f'<p class="updated"><em>Last updated: {esc(meta["updated"])}</em></p>')
+            # the title and the date are in the page's header, not its body
         elif lines[0].startswith("## "):
             if len(lines) != 1:
                 fail(f"{where}: a '## ' heading is one line: {lines[0][:50]!r}")
@@ -211,9 +217,16 @@ def parse(path):
     return meta, title, "\n".join(out)
 
 
-def render(title, description, main, nav, main_class=""):
-    return PAGE.format(title=esc(title), description=attr(description), css=CSS, badge=BADGE,
-                       main_class=main_class, main=main, nav="\n".join(f"    {n}" for n in nav))
+MADE_BY = "Made by the Sandberg family"
+
+
+def intro(headline, sub, made):
+    return "\n".join(f"    {l}" for l in (f"<h1>{esc(headline)}</h1>", f'<p class="sub">{esc(sub)}</p>', f'<p class="made">{esc(made)}</p>'))
+
+
+def render(title, description, head, main, nav):
+    return PAGE.format(title=esc(title), description=attr(description), css=CSS, filter=FILTER, badge=BADGE,
+                       intro=head, main=main, nav="\n".join(f"    {n}" for n in nav))
 
 
 def build():
@@ -230,14 +243,15 @@ def build():
     mail = f'<a href="mailto:{CONTACT}">{CONTACT}</a>'
     for slug, meta, title, body in apps:
         nav = ['<a href="/">All policies</a>', f'<a href="{HOME}">pdxfixit.com</a>', mail]
-        pages[f"{slug}/index.html"] = render(title, f'{meta["name"]}: {meta["blurb"]}. {title}.', body, nav)
+        head = intro(title, meta["blurb"], f'{MADE_BY} \u00b7 Last updated {meta["updated"]}')
+        pages[f"{slug}/index.html"] = render(title, f'{meta["name"]}: {meta["blurb"]}. {title}.', head, body, nav)
     apps.sort(key=lambda a: (int(a[1].get("order", 1000)), a[1]["name"].lower()))
     items = "\n".join(f'    <li><a href="/{s}/"><b>{esc(m["name"])}</b><span>{esc(m["blurb"])}</span></a></li>'
                       for s, m, _, _ in apps)
-    index = (f'<h1>Privacy policies</h1>\n<p class="lede">What each PDXfixIT app keeps, what it sends, and how to delete it.</p>\n'
-             f'<ul class="apps">\n{items}\n</ul>')
-    pages["index.html"] = render("PDXfixIT privacy policies", "The privacy policy for each app PDXfixIT makes.", index,
-                                 [f'<a href="{HOME}">pdxfixit.com</a>', mail], ' class="index"')
+    index = f'<ul class="apps">\n{items}\n</ul>'
+    head = intro("Privacy policies", "What each app keeps, what it sends, and how to delete it.", MADE_BY)
+    pages["index.html"] = render("PDXfixIT privacy policies", "The privacy policy for each app the Sandberg family makes.",
+                                 head, index, [f'<a href="{HOME}">pdxfixit.com</a>', mail])
     return pages
 
 

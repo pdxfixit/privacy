@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>PDXfixIT privacy policies</title>
-<meta name="description" content="The privacy policy for each app PDXfixIT makes.">
+<meta name="description" content="The privacy policy for each app the Sandberg family makes.">
 <meta name="color-scheme" content="light dark">
 <link rel="icon" href="/favicon.ico">
 <style>
@@ -28,19 +28,19 @@ body{margin:0;min-height:100svh;display:grid;grid-template-rows:auto 1fr auto;gr
 ::selection{background:var(--orange);color:#24170F}
 a{color:var(--link)}
 :focus-visible{outline:2px solid currentColor;outline-offset:4px;border-radius:4px}
-.shoulder{padding:clamp(22px,5.5vh,56px) var(--gutter) 0}
-.badge{--s:clamp(58px,5.4vw,80px);width:max-content;margin:0;line-height:0}
+.top{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px clamp(16px,4vw,48px);align-items:start;
+  padding:clamp(22px,5.5vh,56px) var(--gutter) 0}
+.intro{max-width:46rem}
+.badge{--s:clamp(58px,5.4vw,80px);width:max-content;margin:0;line-height:0;justify-self:end}
 .badge a{display:block;border-radius:4px}
 .badge svg{display:block;height:calc(var(--s) * 246 / 305);width:calc(var(--s) * 720 / 305)}
 .badge .wordmark{filter:var(--wordmark-filter)}
-main{align-self:start;width:100%;max-width:46rem;padding:clamp(28px,6vh,72px) var(--gutter)}
-main.index{align-self:center}
-h1{font:340 clamp(2.2rem,6vw,3.6rem)/1.06 var(--serif);letter-spacing:-.022em;margin:0 0 .75rem}
-main.index h1{font-size:clamp(2.4rem,7.5vw,4.6rem);line-height:1.02;margin-bottom:1rem}
+main{align-self:start;width:100%;max-width:46rem;padding:clamp(20px,4vh,40px) var(--gutter) clamp(28px,6vh,72px)}
+h1{font:340 clamp(2rem,5.2vw,3.6rem)/1.06 var(--serif);letter-spacing:-.022em;margin:0 0 .6rem}
+.sub{font-size:clamp(1.1rem,2.4vw,1.4rem);line-height:1.3;margin:0 0 .5rem}
+.made{color:var(--muted);font-size:1rem;margin:0}
 h2{font:400 1.5rem/1.25 var(--serif);margin:2.25rem 0 .5rem}
 p{margin:.75rem 0}
-.updated{color:var(--muted);margin:0 0 1.5rem}
-.lede{color:var(--muted);margin:0 0 2rem;max-width:32rem}
 main ul{padding-left:1.25rem}
 main li{margin:.5rem 0}
 ul.apps{list-style:none;margin:0;padding:0;border-top:1px solid var(--rule)}
@@ -52,6 +52,7 @@ ul.apps span{color:var(--muted)}
 .hem{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 24px;padding:14px var(--gutter) 20px;font-size:16px;color:var(--muted);border-top:1px solid var(--rule)}
 .hem nav{display:flex;flex-wrap:wrap;gap:6px 20px}
 .hem a{color:var(--muted)}
+@media (max-width:640px){.badge{--s:50px}}
 </style>
 </head>
 <body>
@@ -59,7 +60,12 @@ ul.apps span{color:var(--muted)}
 <filter id="to-white" color-interpolation-filters="sRGB"><feColorMatrix values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1 0"/></filter>
 </defs></svg>
 
-<header class="shoulder">
+<header class="top">
+  <div class="intro">
+    <h1>Privacy policies</h1>
+    <p class="sub">What each app keeps, what it sends, and how to delete it.</p>
+    <p class="made">Made by the Sandberg family</p>
+  </div>
   <div class="badge">
     <a href="https://pdxfixit.com/" aria-label="PDXfixIT home">
       <svg viewBox="44 59 720 246" role="img" aria-label="PDXfixIT">
@@ -79,16 +85,14 @@ ul.apps span{color:var(--muted)}
   </div>
 </header>
 
-<main class="index">
-<h1>Privacy policies</h1>
-<p class="lede">What each PDXfixIT app keeps, what it sends, and how to delete it.</p>
+<main>
 <ul class="apps">
     <li><a href="/arrowrama/"><b>Arrow-Rama</b><span>A puzzle game for Android and Wear OS</span></a></li>
 </ul>
 </main>
 
 <footer class="hem">
-  <span>PDXfixIT &middot; Portland, Oregon</span>
+  <span>The Sandberg family</span>
   <nav aria-label="Elsewhere">
     <a href="https://pdxfixit.com/">pdxfixit.com</a>
     <a href="mailto:privacy@pdxfixit.com">privacy@pdxfixit.com</a>
