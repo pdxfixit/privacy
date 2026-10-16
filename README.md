@@ -75,7 +75,7 @@ A paragraph with **bold**, *italic* and a [link](https://example.com).
 - a list item, one line each
 ```
 
-`url:` is where the product lives: a Google Play address for an Android app, the site for a web app. The index shows "Get it on Google Play" or "Open <name>" under the app, and an app with no `url:` (not released yet) gets no link. Links may go to `https:` or a path on this site. A heading is one line, and a list is only `- ` lines.
+`url:` is where the product lives: a Google Play address for an Android app, the site for a web app. The index shows a button in the right margin of the app's row (a globe for a web app, a play triangle for Google Play); an app with no `url:` (not released yet) has no button, and its row is the same height. Links may go to `https:` or a path on this site. A heading is one line, and a list is only `- ` lines.
 A line `@include name` on its own pulls in `src/_shared/name.md`. The contact address is written `{contact}`; an
 email address or a `mailto:` link in the text is an error (see below).
 

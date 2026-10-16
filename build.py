@@ -87,12 +87,12 @@ p{margin:.75rem 0}
 main ul{padding-left:1.25rem}
 main li{margin:.5rem 0}
 ul.apps{list-style:none;margin:0;padding:0;border-top:1px solid var(--rule)}
-ul.apps li{margin:0;border-bottom:1px solid var(--rule)}
-ul.apps a.pol{display:block;padding:1rem 0 .4rem;text-decoration:none;color:var(--ink)}
+ul.apps li{margin:0;border-bottom:1px solid var(--rule);display:flex;align-items:center;gap:12px;min-height:5.5rem}
+ul.apps a.pol{display:block;flex:1;min-width:0;padding:1rem 0;text-decoration:none;color:var(--ink)}
 ul.apps b{display:block;font:400 1.6rem/1.2 var(--serif);color:var(--link);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.2em}
 ul.apps a:hover b{text-decoration-thickness:2px}
-ul.apps .get{margin:0 0 .6rem}
-ul.apps .get a{display:inline-block;padding:.7rem 0;color:var(--link)}
+ul.apps a.go{flex:none;display:flex;align-items:center;justify-content:center;width:48px;height:48px;border:1px solid var(--rule);border-radius:12px;font-size:1.5rem;line-height:1;text-decoration:none}
+ul.apps a.go:hover{border-color:var(--link)}
 ul.apps span{color:var(--muted)}
 .hem{display:flex;flex-wrap:wrap;justify-content:flex-start;gap:6px 24px;padding:14px var(--gutter) 20px;font-size:16px;color:var(--muted);border-top:1px solid var(--rule)}
 .hem nav{display:flex;flex-wrap:wrap;gap:6px 20px}
@@ -335,13 +335,14 @@ def render(title, description, head, main, nav):
 
 
 def get_link(meta):
-    """The index's link to the product itself: Google Play for the Android apps, the site for the web apps.
-    An app with no `url:` (not released yet) gets none."""
+    """The index's button to the product itself, in the right margin of its row: Google Play for the Android apps,
+    the site for the web apps. An app with no `url:` (not released yet) gets none, and its row is just as tall."""
     url = meta.get("url")
     if not url:
         return ""
-    label = "Get it on Google Play" if url.startswith("https://play.google.com/") else f'Open {meta["name"]}'
-    return f'<p class="get"><a href="{esc(url)}">{esc(label)} &rarr;</a></p>'
+    play = url.startswith("https://play.google.com/")
+    label = f'Get {meta["name"]} on Google Play' if play else f'Open {meta["name"]}'
+    return f'<a class="go" href="{esc(url)}" aria-label="{esc(label)}" title="{esc(label)}">{"&#x25B6;&#xFE0F;" if play else "&#x1F310;"}</a>'
 
 
 def build():
