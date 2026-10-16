@@ -96,3 +96,18 @@ Three files in `public/` are kept by hand and shared by every page:
   No agent holds a token.
 - To deploy by hand, from a checkout of flarepress: `just push /path/to/this/repo/site` (it uses
   `CLOUDFLARE_API_TOKEN` when set, else `wrangler login`). The workflow is the normal path.
+- No `justfile` and no `site.conf`, as in pdxfixit/website: `build.py --check` and `site/verify.sh` do that work here.
+
+### On the owner's Mac: the flarepress registry
+
+flarepress's `just sites` (a read-only health check of every site) only sees site folders under
+`~/.config/flarepress/sites/` (`$FLAREPRESS_SITES`). A name there may be a link to an app repo's `site/` folder. To
+include this site:
+
+```
+ln -s /path/to/this/repo/site ~/.config/flarepress/sites/privacy.pdxfixit.com
+just sites privacy.pdxfixit.com           # from a flarepress checkout
+```
+
+A folder without a `site.conf` is checked only for `/` answering 200; this site has no `site.conf`, so it is not
+asked for `/version.json`.
