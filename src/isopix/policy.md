@@ -2,6 +2,7 @@
 name: Isopix
 blurb: Isometric pixel drawing on the web
 updated: 16 October 2026
+url: https://isopix.app/
 ---
 # Isopix privacy policy
 

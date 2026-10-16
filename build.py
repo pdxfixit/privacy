@@ -15,6 +15,7 @@ A policy.md starts with a front matter block, then a small Markdown subset:
     name: Arrow-Rama                              # the app's name, as the index lists it
     blurb: A puzzle game for Android and Wear OS  # the subheadline under the title, and the line under the name on the index
     updated: 16 October 2026                      # shown as "Last updated" in the header
+    url: https://isopix.app/                      # optional: where to get the app (https only); the index links it
     ---
     # Title                  one per page, first: the headline in the page header (it is not repeated in the body)
     ## Heading
@@ -87,9 +88,11 @@ main ul{padding-left:1.25rem}
 main li{margin:.5rem 0}
 ul.apps{list-style:none;margin:0;padding:0;border-top:1px solid var(--rule)}
 ul.apps li{margin:0;border-bottom:1px solid var(--rule)}
-ul.apps a{display:block;padding:1rem 0;text-decoration:none;color:var(--ink)}
+ul.apps a.pol{display:block;padding:1rem 0 .4rem;text-decoration:none;color:var(--ink)}
 ul.apps b{display:block;font:400 1.6rem/1.2 var(--serif);color:var(--link);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.2em}
 ul.apps a:hover b{text-decoration-thickness:2px}
+ul.apps .get{margin:0 0 .6rem}
+ul.apps .get a{display:inline-block;padding:.7rem 0;color:var(--link)}
 ul.apps span{color:var(--muted)}
 .hem{display:flex;flex-wrap:wrap;justify-content:flex-start;gap:6px 24px;padding:14px var(--gutter) 20px;font-size:16px;color:var(--muted);border-top:1px solid var(--rule)}
 .hem nav{display:flex;flex-wrap:wrap;gap:6px 20px}
@@ -276,7 +279,9 @@ def load_shared(name, where):
 
 
 def parse(path):
-    meta, blocks, where = front_matter(path, {"name", "blurb", "updated"}, ("name", "blurb", "updated"))
+    meta, blocks, where = front_matter(path, {"name", "blurb", "updated", "url"}, ("name", "blurb", "updated"))
+    if "url" in meta and not re.fullmatch(r"https://[a-z0-9.-]+(/[^\s\"<>]*)?", meta["url"]):
+        fail(f"{where}: url is one https: address")
     date = parse_date(meta["updated"], where)
     expanded = []
     for b in blocks:
@@ -329,6 +334,16 @@ def render(title, description, head, main, nav):
                        intro=head, main=main, script=SCRIPT, nav="\n".join(f"    {n}" for n in nav))
 
 
+def get_link(meta):
+    """The index's link to the product itself: Google Play for the Android apps, the site for the web apps.
+    An app with no `url:` (not released yet) gets none."""
+    url = meta.get("url")
+    if not url:
+        return ""
+    label = "Get it on Google Play" if url.startswith("https://play.google.com/") else f'Open {meta["name"]}'
+    return f'<p class="get"><a href="{esc(url)}">{esc(label)} &rarr;</a></p>'
+
+
 def build():
     apps = []
     for path in sorted(SRC.glob("*/policy.md")):
@@ -347,7 +362,7 @@ def build():
         pages[f"{slug}/index.html"] = render(title, f'{meta["name"]}: {meta["blurb"]}. {title}.', head, body, nav)
     # The index is alphabetical by name, always: there is no way to set an order, so it cannot be put out of order.
     apps.sort(key=lambda a: (a[1]["name"].casefold(), a[0]))
-    items = "\n".join(f'    <li><a href="/{s}/"><b>{esc(m["name"])}</b><span>{esc(m["blurb"])}</span></a></li>'
+    items = "\n".join(f'    <li><a class="pol" href="/{s}/"><b>{esc(m["name"])}</b><span>{esc(m["blurb"])}</span></a>{get_link(m)}</li>'
                       for s, m, _, _ in apps)
     index = f'<ul class="apps">\n{items}\n</ul>'
     head = intro("Privacy policies", "What each app keeps, what it sends, and how to delete it.", MADE_BY)

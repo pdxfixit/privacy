@@ -2,6 +2,7 @@
 name: Noodle Pads
 blurb: A soundboard for kids and grown-ups on the web
 updated: 16 October 2026
+url: https://noodlepads.com/
 ---
 # Noodle Pads privacy policy
 
