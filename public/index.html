@@ -26,24 +26,32 @@ html{background:var(--ground)}
 body{margin:0;min-height:100svh;display:grid;grid-template-rows:auto 1fr auto;grid-template-columns:minmax(0,1fr);
   background:var(--ground);color:var(--ink);font:400 18px/1.5 var(--serif);font-optical-sizing:auto;-webkit-font-smoothing:antialiased}
 ::selection{background:var(--orange);color:#24170F}
-a{color:inherit}
+a{color:var(--link)}
 :focus-visible{outline:2px solid currentColor;outline-offset:4px;border-radius:4px}
 .shoulder{padding:clamp(22px,5.5vh,56px) var(--gutter) 0}
 .badge{--s:clamp(58px,5.4vw,80px);width:max-content;margin:0;line-height:0}
 .badge a{display:block;border-radius:4px}
 .badge svg{display:block;height:calc(var(--s) * 246 / 305);width:calc(var(--s) * 720 / 305)}
 .badge .wordmark{filter:var(--wordmark-filter)}
-main{align-self:center;width:100%;max-width:46rem;padding:clamp(28px,6vh,72px) var(--gutter)}
-h1{font:340 clamp(2.4rem,7.5vw,4.6rem)/1.02 var(--serif);letter-spacing:-.022em;margin:0 0 1rem}
+main{align-self:start;width:100%;max-width:46rem;padding:clamp(28px,6vh,72px) var(--gutter)}
+main.index{align-self:center}
+h1{font:340 clamp(2.2rem,6vw,3.6rem)/1.06 var(--serif);letter-spacing:-.022em;margin:0 0 .75rem}
+main.index h1{font-size:clamp(2.4rem,7.5vw,4.6rem);line-height:1.02;margin-bottom:1rem}
+h2{font:400 1.5rem/1.25 var(--serif);margin:2.25rem 0 .5rem}
+p{margin:.75rem 0}
+.updated{color:var(--muted);margin:0 0 1.5rem}
 .lede{color:var(--muted);margin:0 0 2rem;max-width:32rem}
-ul{list-style:none;margin:0;padding:0;border-top:1px solid var(--rule)}
-li{border-bottom:1px solid var(--rule)}
-li a{display:block;padding:1rem 0;text-decoration:none}
-li a b{display:block;font:400 1.6rem/1.2 var(--serif);color:var(--link);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.2em}
-li a span{color:var(--muted)}
-li a:hover b{text-decoration-thickness:2px}
+main ul{padding-left:1.25rem}
+main li{margin:.5rem 0}
+ul.apps{list-style:none;margin:0;padding:0;border-top:1px solid var(--rule)}
+ul.apps li{margin:0;border-bottom:1px solid var(--rule)}
+ul.apps a{display:block;padding:1rem 0;text-decoration:none;color:var(--ink)}
+ul.apps b{display:block;font:400 1.6rem/1.2 var(--serif);color:var(--link);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.2em}
+ul.apps a:hover b{text-decoration-thickness:2px}
+ul.apps span{color:var(--muted)}
 .hem{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 24px;padding:14px var(--gutter) 20px;font-size:16px;color:var(--muted);border-top:1px solid var(--rule)}
 .hem nav{display:flex;flex-wrap:wrap;gap:6px 20px}
+.hem a{color:var(--muted)}
 </style>
 </head>
 <body>
@@ -71,12 +79,12 @@ li a:hover b{text-decoration-thickness:2px}
   </div>
 </header>
 
-<main>
-  <h1>Privacy policies</h1>
-  <p class="lede">What each PDXfixIT app keeps, what it sends, and how to delete it.</p>
-  <ul>
+<main class="index">
+<h1>Privacy policies</h1>
+<p class="lede">What each PDXfixIT app keeps, what it sends, and how to delete it.</p>
+<ul class="apps">
     <li><a href="/arrowrama/"><b>Arrow-Rama</b><span>A puzzle game for Android and Wear OS</span></a></li>
-  </ul>
+</ul>
 </main>
 
 <footer class="hem">
