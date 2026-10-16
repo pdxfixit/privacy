@@ -103,9 +103,9 @@ rewritten.
   last 60 days.
 - **No second public address:** `workers_dev = false` and `preview_urls = false` in `site/wrangler.toml`, so the site
   is only on its custom domain.
-- **Workflow:** actions are pinned by commit (with the tag in a comment), and `persist-credentials: false` leaves no
-  token in `.git/config`. flarepress is checked out at its rolling `v1` tag by decision; pin a commit instead if a
-  compromised flarepress ever becomes the bigger worry.
+- **Workflow:** actions float on their rolling major tag (`@v7`) and flarepress on `v1`, by the owner's decision: a
+  breaking change fails the deploy at once instead of lingering. `persist-credentials: false` leaves no token in
+  `.git/config`.
 - **Verified after every deploy:** `site/verify.sh` checks every page and `security.txt` byte for byte, with the
   CSP header.
 
