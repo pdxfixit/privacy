@@ -15,6 +15,7 @@ We are the Sandberg family. We make small apps: Arrow-Rama, Isopix, Noodle Pads 
 
 - **Sent to us**, while **Share play data** is on (Settings; on to start with): every few hours, how Orbit is used. When it opens and closes, which screens and controls are used, each spin and its gestures, settings changed from and to, how fast it loads and draws, and what kind of crash happened and where, never its message. Each record carries the watch's random code.
 - **Not sent:** your location, your name, or anything else about you.
+- **Reset all data** gives the watch a new random code, so what was sent before and after a reset can't be linked.
 - **Your own copies:** if Android backup is on, Orbit's settings go into your own Google account's backup. We can't see it. The random code is left out of backups.
 - **Permissions:** vibrate. Builds that send usage data also use the internet, only to send it.
 

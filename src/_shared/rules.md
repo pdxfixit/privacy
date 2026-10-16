@@ -12,6 +12,7 @@ updated: 16 October 2026
 
 ## How long we keep it (our written retention policy)
 
+- **The files our apps upload, as sent:** 30 days, while we check and convert them. Then only the converted events are kept.
 - **Usage events, without the random code:** kept for good, to compare versions over the years. With no code, an event cannot be tied to anyone.
 - **The random code on those events:** one year after the event, then removed from every copy. It lets us count players and devices within a year. Our tools remove it automatically, and fail if they find one older.
 - **Your IP address:** never stored.
