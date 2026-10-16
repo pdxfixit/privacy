@@ -1,0 +1,36 @@
+# Deploys https://privacy.pdxfixit.com on every push to main, like pdxfixit/website: this
+# repo's own Cloudflare token (Workers Scripts: Edit; pdxfixit.com: Workers Routes: Edit,
+# DNS: Edit, Zone: Read). No agent holds a token. Steps: wrangler deploy through
+# flarepress, then site/verify.sh (the host serves public/index.html byte for byte, and
+# the CSP matches _headers).
+#
+# Secrets: CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID.
+name: deploy
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+jobs:
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/checkout@v7.0.1
+        with:
+          repository: pdxfixit/flarepress
+          ref: v1  # flarepress's rolling tag; Ben moves it to release
+          path: .flarepress
+      - name: Deploy
+        run: .flarepress/tools/wrangler.sh "$GITHUB_WORKSPACE/site" deploy
+      - name: Live matches public/
+        run: site/verify.sh

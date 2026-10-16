@@ -1,0 +1,12 @@
+# privacy.pdxfixit.com: static assets only (public/), on a Custom Domain. Deployed by
+# .github/workflows/deploy.yml on every push to main, through flarepress
+# (github.com/pdxfixit/flarepress), with this repo's own Cloudflare token.
+name = "privacy-pdxfixit-com"
+compatibility_date = "2026-10-16"
+
+routes = [
+  { pattern = "privacy.pdxfixit.com", custom_domain = true }
+]
+
+[assets]
+directory = "../public"
