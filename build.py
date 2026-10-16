@@ -91,6 +91,7 @@ h2{font:400 1.5rem/1.25 var(--serif);margin:2.25rem 0 .5rem}
 p{margin:.75rem 0}
 main ul{padding-left:1.25rem}
 main li{margin:.5rem 0}
+p.note{margin:0 0 1.25rem;max-width:40rem}
 ul.apps{list-style:none;margin:0;padding:0;border-top:1px solid var(--rule)}
 ul.apps li{margin:0;border-bottom:1px solid var(--rule);display:flex;align-items:center;gap:12px;min-height:5.5rem}
 ul.apps a.pol{display:block;flex:1;min-width:0;padding:1rem 0;text-decoration:none;color:var(--ink)}
@@ -354,6 +355,12 @@ PLAY = ('<svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor" str
         'stroke-linejoin="round" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg>')
 
 
+# What is true of every app, said once, above the list (the owner, 2026-10-16: the general text goes on the index, not on each page).
+INDEX_NOTE = ("Every app here is made for all ages, children included, and follows the same rules: no ads, no tracking "
+              "across apps or sites, and nothing sold. Each page lists those rules, what that app sends and keeps, and how "
+              "to delete it.")
+
+
 def get_link(meta):
     """The index's button to the product itself, in the right margin of its row: Google Play for the Android apps,
     the site for the web apps. `url: soon` shows the Play icon, muted and not a link. An app with no `url:` gets nothing,
@@ -389,7 +396,7 @@ def build():
     apps.sort(key=lambda a: (a[1]["name"].casefold(), a[0]))
     items = "\n".join(f'    <li><a class="pol" href="/{s}/"><b>{esc(m["name"])}</b><span>{esc(m["blurb"])}</span></a>{get_link(m)}</li>'
                       for s, m, _, _ in apps)
-    index = f'<ul class="apps">\n{items}\n</ul>'
+    index = f'<p class="note">{esc(INDEX_NOTE)}</p>\n<ul class="apps">\n{items}\n</ul>'
     head = intro("Privacy policies", "What each app keeps, what it sends, and how to delete it.", MADE_BY)
     pages["index.html"] = render("PDXfixIT privacy policies", "The privacy policy for each app the Sandberg family makes.",
                                  head, index, [f'<a href="{HOME}"{NEWTAB}>pdxfixit.com</a>', mail])

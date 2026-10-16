@@ -6,10 +6,6 @@ url: soon
 ---
 # Arrow-Rama privacy policy
 
-We are the Sandberg family. We make small apps: Arrow-Rama, Isopix, Noodle Pads and Orbit. They are for all ages, children included. Every one of them follows the same rules, below. Arrow-Rama is a puzzle game for Android phones, tablets and Wear OS watches.
-
-**In short:** no ads, no tracking across apps or sites, and nothing sold. The game sends us usage data to help us make it better. It never holds a name, contact details or what you make. Each player can turn it off.
-
 @include rules
 
 ## What Arrow-Rama sends, and what it keeps

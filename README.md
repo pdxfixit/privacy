@@ -39,7 +39,7 @@ Text every app shares is written once, in `src/_shared/`:
 ```
 src/_shared/rules.md      the rules every app follows, how long we keep data, children
 src/_shared/closing.md    changes and contact
-src/arrowrama/policy.md   its own intro, what the game sends, deleting data; includes the two above
+src/arrowrama/policy.md   what the game sends, deleting data; includes the two above (no intro of its own)
 ```
 
 A policy includes a partial with a line of its own, with blank lines around it: `@include rules`. A partial is the
@@ -51,6 +51,8 @@ than the shared text it carries. A section only one app has stays in that app's 
 
 Never edit `public/<app>/index.html`, `public/index.html` or `public/_headers` by hand. The deploy runs
 `python3 build.py --check` first and fails if `public/` is not exactly what `src/` builds.
+
+A policy page has no introduction: what is true of every app (all ages, the same rules) is said once on the index, in `INDEX_NOTE` in `build.py`.
 
 ### Add an app
 

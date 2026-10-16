@@ -6,10 +6,6 @@ url: https://noodlepads.com/
 ---
 # Noodle Pads privacy policy
 
-We are the Sandberg family. We make small apps: Arrow-Rama, Isopix, Noodle Pads and Orbit. They are for all ages, children included. Every one of them follows the same rules, below. Noodle Pads is a soundboard that runs in your browser at noodlepads.com.
-
-**In short:** no ads, no tracking across apps or sites, and nothing sold. Noodle Pads sends us usage data to help us make it better. It never holds a real name or contact details. You can turn it off.
-
 @include rules
 
 ## What Noodle Pads sends, and what it keeps

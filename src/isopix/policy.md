@@ -6,10 +6,6 @@ url: https://isopix.app/
 ---
 # Isopix privacy policy
 
-We are the Sandberg family. We make small apps: Arrow-Rama, Isopix, Noodle Pads and Orbit. They are for all ages, children included. Every one of them follows the same rules, below. Isopix is an isometric drawing app that runs in your browser at isopix.app.
-
-**In short:** no ads, no tracking across apps or sites, and nothing sold. Isopix sends us usage data to help us make it better. It never holds a name, contact details or your drawings. You can turn it off.
-
 @include rules
 
 ## What Isopix sends, and what it keeps

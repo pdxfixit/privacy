@@ -6,10 +6,6 @@ url: soon
 ---
 # Orbit privacy policy
 
-We are the Sandberg family. We make small apps: Arrow-Rama, Isopix, Noodle Pads and Orbit. They are for all ages, children included. Every one of them follows the same rules, below. Orbit is a calm fidget toy for Wear OS watches.
-
-**In short:** no ads, no tracking across apps or sites, and nothing sold. Orbit sends us usage data to help us make it better. It never holds a name, contact details or anything you make. You can turn it off.
-
 @include rules
 
 ## What Orbit sends, and what it keeps
