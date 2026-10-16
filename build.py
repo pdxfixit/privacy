@@ -356,8 +356,8 @@ PLAY = ('<svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor" str
 
 
 # What is true of every app, said once, above the list (the owner, 2026-10-16: the general text goes on the index, not on each page).
-INDEX_NOTE = ("Every app here is made for all ages, children included, and follows the same rules: no ads, no tracking "
-              "across apps or sites, and nothing sold. Each page lists those rules, what that app sends and keeps, and how "
+INDEX_NOTE = ("Every app here is made for all ages, children included, and follows the same rules: no ads and no tracking "
+              "across apps or sites. Each page lists those rules, what that app sends and keeps, and how "
               "to delete it.")
 
 
