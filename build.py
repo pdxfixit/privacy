@@ -53,10 +53,9 @@ body{margin:0;min-height:100svh;display:grid;grid-template-rows:auto 1fr auto;gr
 ::selection{background:var(--orange);color:#24170F}
 a{color:var(--link)}
 :focus-visible{outline:2px solid currentColor;outline-offset:4px;border-radius:4px}
-.top{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px clamp(16px,4vw,48px);align-items:start;
-  padding:clamp(22px,5.5vh,56px) var(--gutter) 0}
-.intro{max-width:46rem}
-.badge{--s:clamp(58px,5.4vw,80px);width:max-content;margin:0;line-height:0;justify-self:end}
+.top{padding:clamp(22px,5.5vh,56px) var(--gutter) 0}
+.intro{max-width:46rem;margin-top:clamp(28px,6vh,64px)}
+.badge{--s:clamp(58px,5.4vw,80px);width:max-content;margin:0;line-height:0}
 .badge a{display:block;border-radius:4px}
 .badge svg{display:block;height:calc(var(--s) * 246 / 305);width:calc(var(--s) * 720 / 305)}
 .badge .wordmark{filter:var(--wordmark-filter)}
@@ -77,7 +76,7 @@ ul.apps span{color:var(--muted)}
 .hem{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 24px;padding:14px var(--gutter) 20px;font-size:16px;color:var(--muted);border-top:1px solid var(--rule)}
 .hem nav{display:flex;flex-wrap:wrap;gap:6px 20px}
 .hem a{color:var(--muted)}
-@media (max-width:640px){.badge{--s:50px}}
+@media (max-width:640px){.badge{--s:54px}}
 """
 
 FILTER = """\
@@ -122,10 +121,10 @@ PAGE = """\
 <body>
 {filter}
 <header class="top">
-  <div class="intro">
+{badge}  <div class="intro">
 {intro}
   </div>
-{badge}</header>
+</header>
 
 <main>
 {main}
