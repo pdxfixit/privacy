@@ -15,7 +15,6 @@ A policy.md starts with a front matter block, then a small Markdown subset:
     name: Arrow-Rama                              # the app's name, as the index lists it
     blurb: A puzzle game for Android and Wear OS  # the subheadline under the title, and the line under the name on the index
     updated: 16 October 2026                      # shown as "Last updated" in the header
-    order: 10                                     # optional: lower first on the index (default: by name)
     ---
     # Title                  one per page, first: the headline in the page header (it is not repeated in the body)
     ## Heading
@@ -230,7 +229,7 @@ def load_shared(name, where):
 
 
 def parse(path):
-    meta, blocks, where = front_matter(path, {"name", "blurb", "updated", "order"}, ("name", "blurb", "updated"))
+    meta, blocks, where = front_matter(path, {"name", "blurb", "updated"}, ("name", "blurb", "updated"))
     date = parse_date(meta["updated"], where)
     expanded = []
     for b in blocks:
@@ -299,7 +298,8 @@ def build():
         nav = ['<a href="/">All policies</a>', f'<a href="{HOME}">pdxfixit.com</a>', mail]
         head = intro(title, meta["blurb"], f'Last updated {meta["updated"]}')
         pages[f"{slug}/index.html"] = render(title, f'{meta["name"]}: {meta["blurb"]}. {title}.', head, body, nav)
-    apps.sort(key=lambda a: (int(a[1].get("order", 1000)), a[1]["name"].lower()))
+    # The index is alphabetical by name, always: there is no way to set an order, so it cannot be put out of order.
+    apps.sort(key=lambda a: (a[1]["name"].casefold(), a[0]))
     items = "\n".join(f'    <li><a href="/{s}/"><b>{esc(m["name"])}</b><span>{esc(m["blurb"])}</span></a></li>'
                       for s, m, _, _ in apps)
     index = f'<ul class="apps">\n{items}\n</ul>'

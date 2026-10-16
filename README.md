@@ -55,7 +55,8 @@ and fails if `public/` is not exactly what `src/` builds.
 ### Add an app
 
 Add `src/<app>/policy.md` (the folder name is the URL path: lowercase letters, digits, hyphens) and run
-`python3 build.py`. The index lists it, ordered by `order:` if set, else by name.
+`python3 build.py`. The index lists it, always alphabetically by `name:` (case ignored). There is no way to set an
+order, and a hand-reordered `public/index.html` fails the deploy's `build.py --check`.
 
 ### The policy.md format
 
@@ -66,7 +67,6 @@ A front matter block, then a small Markdown subset. `build.py` documents it at t
 name: Arrow-Rama                              # the app's name, as the index lists it
 blurb: A puzzle game for Android and Wear OS  # the subheadline, and the line under the name on the index
 updated: 16 October 2026                      # "Last updated" in the page header
-order: 10                                     # optional: lower first on the index
 ---
 # Arrow-Rama privacy policy        the headline; one per page, first
 ## A heading
