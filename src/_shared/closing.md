@@ -7,4 +7,4 @@ If this policy changes, we update this page and the date at the top.
 
 ## Contact
 
-The Sandberg family. {contact}
+{contact}
