@@ -92,9 +92,10 @@ ul.apps li{margin:0;border-bottom:1px solid var(--rule);display:flex;align-items
 ul.apps a.pol{display:block;flex:1;min-width:0;padding:1rem 0;text-decoration:none;color:var(--ink)}
 ul.apps b{display:block;font:400 1.6rem/1.2 var(--serif);color:var(--link);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.2em}
 ul.apps a:hover b{text-decoration-thickness:2px}
-ul.apps a.go{flex:none;display:flex;align-items:center;justify-content:center;width:48px;height:48px;border:1px solid var(--rule);border-radius:12px;font-size:1.5rem;line-height:1;text-decoration:none}
+ul.apps a.go{flex:none;display:flex;align-items:center;justify-content:center;width:48px;height:48px;border:1px solid var(--rule);border-radius:12px;color:var(--link);text-decoration:none}
+ul.apps .go svg{display:block}
 ul.apps a.go:hover{border-color:var(--link)}
-ul.apps .go.soon{flex:none;display:flex;align-items:center;justify-content:center;width:48px;height:48px;border:1px dashed var(--rule);border-radius:12px;font-size:1.5rem;line-height:1;opacity:.45;filter:grayscale(1)}
+ul.apps .go.soon{flex:none;display:flex;align-items:center;justify-content:center;width:48px;height:48px;border:1px dashed var(--rule);border-radius:12px;color:var(--muted);opacity:.55}
 ul.apps span{color:var(--muted)}
 .hem{display:flex;flex-wrap:wrap;justify-content:flex-start;gap:6px 24px;padding:14px var(--gutter) 20px;font-size:16px;color:var(--muted);border-top:1px solid var(--rule)}
 .hem nav{display:flex;flex-wrap:wrap;gap:6px 20px}
@@ -336,6 +337,14 @@ def render(title, description, head, main, nav):
                        intro=head, main=main, script=SCRIPT, nav="\n".join(f"    {n}" for n in nav))
 
 
+# Icons for the index buttons, as SVG so they centre exactly (an emoji glyph sits off-centre in its line box).
+GLOBE = ('<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6" '
+         'stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/>'
+         '<path d="M3 12h18"/></svg>')
+PLAY = ('<svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor" stroke="currentColor" stroke-width="2" '
+        'stroke-linejoin="round" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg>')
+
+
 def get_link(meta):
     """The index's button to the product itself, in the right margin of its row: Google Play for the Android apps,
     the site for the web apps. `url: soon` shows the Play icon, muted and not a link. An app with no `url:` gets nothing,
@@ -345,10 +354,10 @@ def get_link(meta):
         return ""
     if url == "soon":
         label = f'{meta["name"]} is coming to Google Play'
-        return f'<span class="go soon" role="img" aria-label="{esc(label)}" title="{esc(label)}">&#x25B6;&#xFE0F;</span>'
+        return f'<span class="go soon" role="img" aria-label="{esc(label)}" title="{esc(label)}">{PLAY}</span>'
     play = url.startswith("https://play.google.com/")
     label = f'Get {meta["name"]} on Google Play' if play else f'Open {meta["name"]}'
-    return f'<a class="go" href="{esc(url)}" aria-label="{esc(label)}" title="{esc(label)}">{"&#x25B6;&#xFE0F;" if play else "&#x1F310;"}</a>'
+    return f'<a class="go" href="{esc(url)}" aria-label="{esc(label)}" title="{esc(label)}">{PLAY if play else GLOBE}</a>'
 
 
 def build():
