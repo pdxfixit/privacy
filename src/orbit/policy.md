@@ -2,6 +2,7 @@
 name: Orbit
 blurb: A fidget toy for Wear OS
 updated: 16 October 2026
+url: soon
 ---
 # Orbit privacy policy
 

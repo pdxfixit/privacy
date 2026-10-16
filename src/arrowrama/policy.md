@@ -2,6 +2,7 @@
 name: Arrow-Rama
 blurb: A puzzle game for Android and Wear OS
 updated: 16 October 2026
+url: soon
 ---
 # Arrow-Rama privacy policy
 
