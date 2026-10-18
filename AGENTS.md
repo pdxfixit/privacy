@@ -24,4 +24,6 @@ break and that CI or a reader will catch.
 - **Do not add another origin, script or third-party request** (fonts, analytics, a CDN, an embed). The pages load
   nothing but their own files; the CSP in the generated `_headers` allows exactly that. The policies tell people so.
 - **Keep `SECURITY_EXPIRES` in `build.py` in the future** (`security.txt`); `build.py` warns in its last 60 days.
-- **Push to `main`.** A push deploys. Check the run (the `deploy` workflow) before saying a change is live.
+- **Land with `just land`**, from your own branch (a worktree): flarepress's shared tool pulls `main` from GitHub first,
+  cherry-picks your commits, runs `just test` (`build.py --check`), and pushes. A push deploys. Check the run (the
+  `deploy` workflow) before saying a change is live.

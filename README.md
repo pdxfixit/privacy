@@ -30,7 +30,7 @@ site/verify.sh           after a deploy, checks the live site matches public/
 1. Edit `src/<app>/policy.md` (an app's own sections), or `src/_shared/<name>.md` (text every app shares, below), and
    set `updated:` in that file's front matter to the new date.
 2. Run `python3 build.py` and commit `src/` and `public/` together.
-3. Push to `main`. The deploy does the rest.
+3. Land it on `main` with `just land` (it pulls `main` first, runs `just test`, pushes). The deploy does the rest.
 
 ### Shared text
 
