@@ -1,7 +1,7 @@
 ---
 name: Noodle Pads
 blurb: A soundboard for kids and grown-ups on the web
-updated: 16 October 2026
+updated: 19 October 2026
 url: https://noodlepads.com/
 ---
 # Noodle Pads privacy policy
@@ -17,11 +17,14 @@ url: https://noodlepads.com/
 - **Problem reports** are off unless you turn them on, per device: the app's cleaned event log (no sounds, no names), its settings, how many sounds, beats and songs it has, the browser, system and device type, screen size, time zone, sound timing, and the device's random code. Kept 14 days on our server; our copy of each report is deleted a year after it was sent.
 - **Not sent to anyone else.** The app loads nothing from other sites: its fonts come from noodlepads.com. Profile names and pictures never leave our server's database.
 
+@include feedback
+
 ## Deleting your data
 
 - **A cloud profile:** 👥 People, tap the person, ☁️ Cloud, then 📴 Offline deletes the profile from our server at once, with its recordings and usage data, except what it shared (tap 🚫 Unshare first).
 - **In your browser:** clear noodlepads.com's site data to remove your device's own copy.
 - **Usage data:** turn Share play data off to stop sending more. We can't tell which records are yours: the code is never shown and is linked to nothing else. It is removed after one year anyway.
+- **Feedback:** we can't tell which message is yours either. Write to {contact} with roughly what it said and when, and we'll delete it; it is deleted after 90 days anyway.
 - **Questions or requests:** write to {contact}.
 
 @include closing
