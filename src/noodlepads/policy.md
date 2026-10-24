@@ -1,7 +1,7 @@
 ---
 name: Noodle Pads
 blurb: A soundboard for kids and grown-ups on the web
-updated: 20 October 2026
+updated: 24 October 2026
 url: https://noodlepads.com/
 ---
 # Noodle Pads privacy policy
@@ -22,7 +22,7 @@ url: https://noodlepads.com/
 
 ## Deleting your data
 
-- **A cloud profile:** 👥 People, tap the person, ☁️ Cloud, then 📴 Offline deletes the profile from our server at once, with its recordings and usage data, except what it shared (tap 🚫 Unshare first).
+- **A cloud profile:** 👥 People, tap the person, then tap Delete three times. The second tap deletes them from this device; the third deletes the profile from our server at once (asking for its PIN, if it has one), with its recordings and usage data, except what it shared (tap 🚫 Unshare first). To keep this device's own copy, switch ☁️ In the cloud off instead (tap it twice).
 - **In your browser:** clear noodlepads.com's site data to remove your device's own copy.
 - **Usage data:** turn Share play data off to stop sending more. We can't tell which records are yours: the code is never shown and is linked to nothing else. It is removed after one year anyway.
 - **Feedback:** we can't tell which message is yours either. Write to {contact} with roughly what it said and when, and we'll delete it; it is deleted after 90 days anyway.
