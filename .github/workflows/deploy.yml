@@ -54,7 +54,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if [ -z "$(git status --porcelain)" ]; then echo "Pulled policies are up to date."; exit 0; fi
+          if [ -z "$(git status --porcelain --untracked-files=no)" ]; then echo "Pulled policies are up to date."; exit 0; fi
           git -c user.name=github-actions[bot] -c user.email=41898282+github-actions[bot]@users.noreply.github.com \
             commit -q -am "chore: pull the apps' policies ($(git rev-parse --short HEAD))" \
             -m "Pulled by the deploy from the apps' own repos (pulled.txt)."
