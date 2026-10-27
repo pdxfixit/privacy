@@ -1,10 +1,16 @@
 """tools/take.sh: takes an app's policy, builds, tests and commits it; refuses what is not safe; undoes a failure."""
-import os, shutil, subprocess, tempfile, unittest
+import datetime, os, shutil, subprocess, tempfile, unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 POLICY = "---\nname: Demo\nblurb: A demo\nupdated: 1 January 2026\n---\n# Demo privacy policy\n\n@include rules\n\n## What Demo keeps\n\n- Nothing.\n"
 GIT = ["git", "-c", "user.name=t", "-c", "user.email=t@example.invalid"]
+
+
+def day(offset=0):
+    """Today (UTC) plus offset days, written the way a policy writes it: 16 October 2026."""
+    d = datetime.datetime.now(datetime.timezone.utc).date() + datetime.timedelta(days=offset)
+    return f"{d.day} {d.strftime('%B')} {d.year}"
 
 
 class TakeTest(unittest.TestCase):
@@ -68,6 +74,57 @@ class TakeTest(unittest.TestCase):
         self.assertIn("bump updated:", r.stderr)
         self.assertEqual(self.head(), before)
         self.assertIn("Nothing.", (self.repo / "src/demo/policy.md").read_text())
+
+    def site_copy_dated(self, when):
+        """Commit the site copy with an updated: of `when`, as an earlier take would have left it."""
+        dest = self.repo / "src/demo/policy.md"
+        dest.write_text(POLICY.replace("1 January 2026", when))
+        subprocess.run(["python3", "build.py"], cwd=self.repo, check=True, capture_output=True)
+        self.git("add", "-A")
+        self.git("commit", "-q", "-m", f"site copy dated {when}")
+
+    def edit(self, when, text="Little."):
+        self.file.write_text(POLICY.replace("Nothing.", text).replace("1 January 2026", when))
+
+    def test_a_changed_text_needs_an_updated_later_than_the_site_copys(self):
+        self.site_copy_dated("5 March 2026")
+        for when in ("5 March 2026", "4 March 2026", "1 January 2025"):
+            self.edit(when)
+            before = self.head()
+            r = self.take()
+            self.assertNotEqual(r.returncode, 0, when)
+            self.assertIn("bump updated:", r.stderr, when)
+            self.assertEqual(self.head(), before)
+        self.edit("6 March 2026")
+        r = self.take()
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertIn("Little.", (self.repo / "src/demo/policy.md").read_text())
+
+    def test_a_second_edit_on_the_same_day_is_taken_when_that_day_is_today(self):
+        self.site_copy_dated(day())
+        self.edit(day())
+        r = self.take()
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertIn("Little.", (self.repo / "src/demo/policy.md").read_text())
+
+    def test_the_same_day_is_refused_when_it_is_not_today(self):
+        self.site_copy_dated(day(-1))
+        self.edit(day(-1))
+        r = self.take()
+        self.assertNotEqual(r.returncode, 0)
+        self.assertIn("bump updated:", r.stderr)
+        self.edit(day())
+        self.assertEqual(self.take().returncode, 0, "today is later than yesterday")
+
+    def test_refuses_an_updated_in_the_future_or_not_a_date(self):
+        for when in (day(1), "31 February 2026", "Soon", "2026-03-05"):
+            self.edit(when)
+            before = self.head()
+            r = self.take()
+            self.assertNotEqual(r.returncode, 0, when)
+            self.assertIn("updated:", r.stderr, when)
+            self.assertEqual(self.head(), before)
+            self.assertIn("Nothing.", (self.repo / "src/demo/policy.md").read_text())
 
     def test_refuses_an_app_folder_that_does_not_exist(self):
         r = self.take(app="nope")

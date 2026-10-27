@@ -20,6 +20,7 @@ consistent with each other and with pdxfixit.com, and no app repo needs a page g
 src/<app>/policy.md      the policy text for one app (the only thing an app changes)
 src/_shared/<name>.md    text shared by every app's policy, included with `@include <name>`
 build.py                 src/ -> public/<app>/index.html and public/index.html
+tools/send.sh            an app's `just policy` runs this: takes its policy in a scratch worktree and lands it (the one copy of that logic)
 tools/take.sh            takes an app's policy file into src/<app>/policy.md, builds, tests, commits (just take)
 public/                  what is deployed: built pages, plus files kept by hand (below)
 site/wrangler.toml       the Worker and its custom domain
@@ -41,15 +42,22 @@ format below, with its `@include` lines). `src/<app>/policy.md` here is a word-f
 in the same task; nothing fetches it, and no CI link joins the repos.
 
 - In the app repo: edit `docs/privacy-policy.md`, bump `updated:`, commit it, get it on the app's `main`, then run
-  `just policy`. It finds this checkout (`$PRIVACY`, else `../privacy` beside the app, else a clone in
-  `${XDG_CACHE_HOME:-~/.cache}/privacy`), pulls `main` (fast-forward only), runs `just take <app> docs/privacy-policy.md`
-  here with `TAKE_SHA` set to the app's commit, then `just land`. It refuses when the app's copy has uncommitted changes.
+  `just policy`. The recipe is the same in all four apps (only the app name differs): it finds this checkout (`$PRIVACY`,
+  else `../privacy` beside the app's main checkout, else a clone in `${XDG_CACHE_HOME:-~/.cache}/privacy`) and runs its
+  `tools/send.sh <app> docs/privacy-policy.md`. `--dry-run` stops after the take and shows the commit that would land.
+- `tools/send.sh <app> <policy file> [--dry-run]` (plain shell) is the one place that logic lives, as flarepress's
+  `land.sh` is for landing. It refuses a policy file with uncommitted changes and, on a real run, an app `HEAD` that is
+  not on the app's `origin/main`. It fetches this repo, makes a throwaway worktree of `origin/main` on its own branch
+  (this checkout is never switched or dirtied; a clean checkout on `main` is fast-forwarded), runs `just take` there with
+  `TAKE_SHA` set to the app's `HEAD`, then `just land`, and removes the worktree. A landing that fails keeps the worktree
+  and prints where it is. `tests/test_send.py` runs it against fake origins and stub recipes.
 - `just take <app> <file>` (`tools/take.sh`, plain shell) copies the file to `src/<app>/policy.md`, runs
   `python3 build.py` and `just test`, and commits `src/<app>/policy.md` and `public/` (message from `TAKE_MESSAGE`, else
   `docs: <App>: policy from <app>@<sha>` when `TAKE_SHA` is set). It does not push. It refuses an app folder that does not
-  exist, a file without front matter holding `name:`, `blurb:` and `updated:`, a changed text whose `updated:` did not
-  change, and uncommitted changes here. A failed build or test puts `src/` and `public/` back as committed. Nothing
-  changed: it says so and exits 0.
+  exist, a file without front matter holding `name:`, `blurb:` and `updated:`, a changed text whose `updated:` is not a
+  real date, is in the future (UTC), or is not later than the site copy's (the same day counts only when it is today, UTC,
+  so a second edit that day goes in), and uncommitted changes here. A failed build or test puts `src/` and `public/` back
+  as committed. Nothing changed: it says so and exits 0.
 - Never edit those four `policy.md` files here. Shared blocks (`src/_shared/`) are still edited here, below.
 - A new app: make `src/<app>/` with a first `policy.md` on purpose, then take from the app.
 

@@ -4,14 +4,15 @@ set shell := ["bash", "-uc"]
 default:
     @just --list
 
-# 🧪 public/ is exactly what src/ builds (the deploy runs the same check), and tools/take.sh behaves
+# 🧪 public/ is exactly what src/ builds (the deploy runs the same check), and tools/take.sh and tools/send.sh behave
 test:
-    python3 -m unittest discover -s tests -q
-    python3 build.py --check
+    @python3 -m unittest discover -s tests -q
+    @python3 build.py --check
 
-# 📥 Take an app's policy from its repo: copy the file to src/<app>/policy.md, build, test, commit (no push; then `just land`). TAKE_SHA, TAKE_MESSAGE
+# An app's `just policy` does not call this by hand: it runs tools/send.sh, which takes and lands in a scratch worktree.
+# 📥 Take an app's policy from its repo: copy the file to src/<app>/policy.md, build, test, commit (no push; then `just land`). TAKE_SHA, TAKE_MESSAGE.
 take app file:
-    bash tools/take.sh {{app}} {{file}}
+    @bash tools/take.sh {{app}} {{file}}
 
 # Lands through flarepress's shared tool (tools/land.sh in the flarepress checkout beside this one,
 # else $FLAREPRESS, else a clone in ~/.cache); land.conf here says what it runs.

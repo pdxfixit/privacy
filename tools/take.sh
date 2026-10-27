@@ -5,7 +5,9 @@
 # the app's recipe runs `just land` here afterwards. Nothing changed: it says so and exits 0.
 #
 # Refuses: an app folder that does not exist, a file that is not a policy (front matter with name:, blurb:
-# and updated:), a changed text whose updated: did not change, and a checkout with uncommitted changes.
+# and updated:), a changed text whose updated: is not a real date, is in the future (UTC), or is not later
+# than the site copy's (equal is fine only when it is today, UTC, so a second edit the same day goes in),
+# and a checkout with uncommitted changes.
 # A failed build or test puts src/<app>/policy.md and public/ back as committed.
 #
 # Environment: TAKE_MESSAGE is the commit message; else, when TAKE_SHA is set, "docs: <Name>: policy from
@@ -44,7 +46,24 @@ new_updated=$(printf '%s\n' "$fm" | key updated)
 dest="src/$app/policy.md"
 if [ -f "$dest" ] && ! cmp -s "$file" "$dest"; then
   old_updated=$(front "$dest" | key updated || true)
-  [ "$new_updated" != "$old_updated" ] || fail "the text changed but updated: is still '$new_updated'; bump updated: in the app's policy"
+  # The text changed, so updated: must say so: later than the site copy's, or the same day when that day is today (UTC).
+  python3 - "$new_updated" "$old_updated" <<'PY' || exit 1
+import datetime, sys
+M = "January February March April May June July August September October November December".split()
+def parse(s):
+    try:
+        d, m, y = s.split()
+        return datetime.date(int(y), M.index(m) + 1, int(d))
+    except ValueError:
+        return None
+new, old, today = parse(sys.argv[1]), parse(sys.argv[2]), datetime.datetime.now(datetime.timezone.utc).date()
+if new is None:
+    sys.exit("take: updated: '%s' is not a date like '16 October 2026'" % sys.argv[1])
+if new > today:
+    sys.exit("take: updated: '%s' is in the future (today is %s, UTC)" % (sys.argv[1], today))
+if old is not None and not (new > old or (new == old and new == today)):
+    sys.exit("take: updated: '%s' is not later than the site copy's '%s' (the same day only counts when it is today, %s UTC); bump updated: in the app's policy" % (sys.argv[1], sys.argv[2], today))
+PY
 fi
 
 restore() { git checkout -q HEAD -- "$dest" public 2>/dev/null || true; git clean -fdq -- public 2>/dev/null || true; }
