@@ -4,9 +4,15 @@ set shell := ["bash", "-uc"]
 default:
     @just --list
 
-# 🧪 public/ is exactly what src/ builds (the deploy runs the same check)
+# 🧪 public/ is exactly what src/ builds (the deploy runs the same check), and pull.py behaves
 test:
+    python3 -m unittest discover -s tests -q
     python3 build.py --check
+
+# 📥 Copy each pulled app's policy from its own repo (pulled.txt) into src/, then build: PULL_REF=<commit> just pull
+pull:
+    python3 pull.py
+    python3 build.py
 
 # Lands through flarepress's shared tool (tools/land.sh in the flarepress checkout beside this one,
 # else $FLAREPRESS, else a clone in ~/.cache); land.conf here says what it runs.

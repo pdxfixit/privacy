@@ -8,7 +8,14 @@ break and that CI or a reader will catch.
   `public/` that `src/` would not build.
 - **The index lists apps alphabetically by `name:` (case ignored), always.** The build sorts them; there is no
   `order:` key and no way to set one. Do not reorder `public/index.html` by hand (it fails the check) and do not add an
-  ordering feature. Adding an app is one `src/<app>/policy.md`; it lands in its alphabetical place by itself.
+  ordering feature. Adding an app is one `src/<app>/policy.md` (or one line in `pulled.txt`); it lands in its
+  alphabetical place by itself.
+- **A pulled app's policy is written in the app's repo, never here.** `pulled.txt` lists the apps (Noodle Pads:
+  `docs/privacy-policy.md` in pdxfixit/noodlepads). `src/<app>/policy.md` for those is a word-for-word copy that
+  `pull.py` makes; do not edit it (the next deploy overwrites it). Change the wording in the app's repo; `just pull`
+  fetches it (`PULL_REF=<commit>` for a commit not yet on `main`'s CDN copy) and builds. The deploy pulls on every run
+  and, if that changed anything, commits `src/` and `public/` to `main` as github-actions[bot], so the history stays
+  here. A `noodlepads-policy` `repository_dispatch` from Noodle Pads starts that deploy when its policy changes.
 - **Policy text is `src/<app>/policy.md`.** Text every app shares is written once in `src/_shared/<name>.md` and
   pulled in with `@include <name>`. Change shared wording there, not as a copy in each app. Never copy shared text
   into a policy.md.
@@ -24,6 +31,8 @@ break and that CI or a reader will catch.
 - **Do not add another origin, script or third-party request** (fonts, analytics, a CDN, an embed). The pages load
   nothing but their own files; the CSP in the generated `_headers` allows exactly that. The policies tell people so.
 - **Keep `SECURITY_EXPIRES` in `build.py` in the future** (`security.txt`); `build.py` warns in its last 60 days.
+- **Do not commit a stamped `public/`** (`BUILD_SHA` is replaced only inside the deploy). `just test` runs the pull
+  tests and `build.py --check`; neither touches the network.
 - **Land with `just land`**, from your own branch (a worktree): flarepress's shared tool pulls `main` from GitHub first,
   cherry-picks your commits, runs `just test` (`build.py --check`), and pushes. A push deploys. Check the run (the
   `deploy` workflow) before saying a change is live.
