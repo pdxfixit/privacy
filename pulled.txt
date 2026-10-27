@@ -1,3 +1,0 @@
-# Apps whose policy text lives in the app's own repo. pull.py copies each file, word for word, to
-# src/<app>/policy.md; build.py then builds it like any other. Columns: app folder, repo, path in the repo.
-noodlepads pdxfixit/noodlepads docs/privacy-policy.md

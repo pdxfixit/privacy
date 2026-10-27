@@ -6,7 +6,7 @@ Worker (static assets only, no script).
 | App | Policy |
 |---|---|
 | Arrow-Rama (Android and Wear OS puzzle game) | https://privacy.pdxfixit.com/arrowrama/ |
-| Noodle Pads (web soundboard; policy pulled from its repo) | https://privacy.pdxfixit.com/noodlepads/ |
+| Noodle Pads (web soundboard) | https://privacy.pdxfixit.com/noodlepads/ |
 
 The index at https://privacy.pdxfixit.com/ lists every app. GitHub Pages is not used. This repo was renamed from
 `arrowrama-privacy`; GitHub redirects the old name for git, but update any remote or link that still uses it.
@@ -20,7 +20,7 @@ consistent with each other and with pdxfixit.com, and no app repo needs a page g
 src/<app>/policy.md      the policy text for one app (the only thing an app changes)
 src/_shared/<name>.md    text shared by every app's policy, included with `@include <name>`
 build.py                 src/ -> public/<app>/index.html and public/index.html
-pull.py, pulled.txt      copies a pulled app's policy from its own repo into src/<app>/policy.md
+tools/take.sh            takes an app's policy file into src/<app>/policy.md, builds, tests, commits (just take)
 public/                  what is deployed: built pages, plus files kept by hand (below)
 site/wrangler.toml       the Worker and its custom domain
 site/verify.sh           after a deploy, checks the live site matches public/
@@ -29,28 +29,29 @@ site/verify.sh           after a deploy, checks the live site matches public/
 
 ### Change a policy
 
-1. Edit `src/<app>/policy.md` (an app's own sections; not a pulled app's, below), or `src/_shared/<name>.md` (text every app shares, below), and
+1. Edit `src/<app>/policy.md` (an app's own sections; for noodlepads, isopix, arrowrama and orbit it is a copy, below), or `src/_shared/<name>.md` (text every app shares, below), and
    set `updated:` in that file's front matter to the new date.
 2. Run `python3 build.py` and commit `src/` and `public/` together.
 3. Land it on `main` with `just land` (it pulls `main` first, runs `just test`, pushes). The deploy does the rest.
 
-### A policy written in the app's repo (pulled)
+### A policy written in the app's repo (a copy here)
 
-An app that wants to write its own policy keeps it in its repo and is listed in `pulled.txt` (app folder, repo, path).
-Noodle Pads does: `docs/privacy-policy.md` in pdxfixit/noodlepads, same format as below, with its `@include` lines.
+Noodle Pads, Isopix, Arrow-Rama and Orbit each keep their policy beside their code, as `docs/privacy-policy.md` (the
+format below, with its `@include` lines). `src/<app>/policy.md` here is a word-for-word copy that the app's agent makes
+in the same task; nothing fetches it, and no CI link joins the repos.
 
-- `python3 pull.py` fetches each listed file from `raw.githubusercontent.com` (stdlib `urllib`; `PULL_REF` is `main` or a
-  full commit) and writes it, unchanged, to `src/<app>/policy.md`. It writes nothing unless every fetch succeeded and
-  the file starts with a policy's front matter. `just pull` pulls and builds. `pull.py --check` says whether the
-  committed copy is current.
-- The copy is committed, so `build.py --check` and `just test` keep their meaning (public/ is exactly what src/ builds)
-  with no network, and the policy's history stays in this repo. Never edit it here.
-- The deploy runs `pull.py` and `build.py` first. If that changed anything it commits the change to `main` as
-  `github-actions[bot]` (GITHUB_TOKEN pushes start no workflow, so nothing loops; a rejected push is retried once after a
-  rebase), then checks, stamps and deploys that commit.
-- The deploy also runs on `repository_dispatch` of type `noodlepads-policy`, which Noodle Pads' CI sends when a push
-  changes `docs/privacy-policy.md`; the payload's `sha` is the commit to read. If Noodle Pads has no token set, nothing is
-  sent and the change is picked up by the next deploy here (or a manual run of `deploy`).
+- In the app repo: edit `docs/privacy-policy.md`, bump `updated:`, commit it, get it on the app's `main`, then run
+  `just policy`. It finds this checkout (`$PRIVACY`, else `../privacy` beside the app, else a clone in
+  `${XDG_CACHE_HOME:-~/.cache}/privacy`), pulls `main` (fast-forward only), runs `just take <app> docs/privacy-policy.md`
+  here with `TAKE_SHA` set to the app's commit, then `just land`. It refuses when the app's copy has uncommitted changes.
+- `just take <app> <file>` (`tools/take.sh`, plain shell) copies the file to `src/<app>/policy.md`, runs
+  `python3 build.py` and `just test`, and commits `src/<app>/policy.md` and `public/` (message from `TAKE_MESSAGE`, else
+  `docs: <App>: policy from <app>@<sha>` when `TAKE_SHA` is set). It does not push. It refuses an app folder that does not
+  exist, a file without front matter holding `name:`, `blurb:` and `updated:`, a changed text whose `updated:` did not
+  change, and uncommitted changes here. A failed build or test puts `src/` and `public/` back as committed. Nothing
+  changed: it says so and exits 0.
+- Never edit those four `policy.md` files here. Shared blocks (`src/_shared/`) are still edited here, below.
+- A new app: make `src/<app>/` with a first `policy.md` on purpose, then take from the app.
 
 ### Shared text
 
@@ -169,9 +170,9 @@ Three files in `public/` are kept by hand and shared by every page:
 - `public/_headers` (generated by `build.py`) sets the response headers: no-cache, `nosniff`, a referrer policy and a
   strict CSP (no other origins; this site's own images and font, inline styles, and the one inline script, by hash,
   that builds the contact link). It is not served as a file.
-- `.github/workflows/deploy.yml` runs on every push to `main`, on a `noodlepads-policy` dispatch and by hand, in this order:
-  1. `pull.py` and `build.py`: the pulled policies are fetched; a change is committed to `main` by the deploy (above).
-  2. `python3 build.py --check`: `public/` is a clean build of `src/`.
+- `.github/workflows/deploy.yml` runs on every push to `main` and by hand, with read-only `contents`, in this order:
+  1. `python3 build.py --check`: `public/` is a clean build of `src/`.
+  2. The commit is stamped into each page's footer.
   3. `wrangler deploy` through [flarepress](https://github.com/pdxfixit/flarepress), as pdxfixit/website does.
   4. `site/verify.sh`: every `public/**/index.html` is served byte for byte, with the CSP from `_headers`, five
      fetches in a row within 90 seconds. Cloudflare's edge can lag an upload, so one fetch proves nothing.
@@ -180,7 +181,7 @@ Three files in `public/` are kept by hand and shared by every page:
   No agent holds a token.
 - To deploy by hand, from a checkout of flarepress: `just push /path/to/this/repo/site` (it uses
   `CLOUDFLARE_API_TOKEN` when set, else `wrangler login`). The workflow is the normal path.
-- No `justfile` and no `site.conf`, as in pdxfixit/website: `build.py --check` and `site/verify.sh` do that work here.
+- The `justfile` holds `test`, `take` and `land`; there is no `site.conf`, as in pdxfixit/website: `build.py --check` and `site/verify.sh` do that work here.
 
 ### On the owner's Mac: the flarepress registry
 

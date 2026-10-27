@@ -5,22 +5,18 @@
 # flarepress, then site/verify.sh (the host serves every public/**/index.html byte for byte, and
 # the CSP matches _headers).
 #
-# Pulled policies: an app listed in pulled.txt (Noodle Pads) keeps its policy in its own repo. Every deploy
-# first runs pull.py and build.py; if that changes src/ or public/, the deploy commits the change to main as
-# github-actions[bot] (so the policy's history is kept here) and deploys that commit. Noodle Pads' CI sends a
-# `noodlepads-policy` repository_dispatch when its docs/privacy-policy.md changes, naming the commit to read.
-# GITHUB_TOKEN pushes start no workflow, so this cannot loop.
+# Each app keeps its policy beside its code and copies it here with `just take` (tools/take.sh, run by the
+# app's `just policy`): a normal commit to src/<app>/policy.md and public/, landed with `just land`. Nothing
+# in this workflow reads another repo, and it commits nothing.
 #
 # Secrets: CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID.
 name: deploy
 on:
   push:
     branches: [main]
-  repository_dispatch:
-    types: [noodlepads-policy]
   workflow_dispatch:
 permissions:
-  contents: write   # only the "Commit pulled policies" step pushes
+  contents: read
 concurrency:
   group: deploy
   cancel-in-progress: false
@@ -43,25 +39,6 @@ jobs:
           repository: pdxfixit/flarepress
           ref: v1  # flarepress's rolling tag; Ben moves it to release
           path: .flarepress
-      - name: Pull the apps' own policies
-        env:
-          # A dispatch names the commit to read (a fresh file, not a cached branch copy); pull.py accepts main or 40 hex only.
-          PULL_REF: ${{ github.event.client_payload.sha || 'main' }}
-        run: |
-          python3 pull.py
-          python3 build.py
-      - name: Commit pulled policies
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          if [ -z "$(git status --porcelain --untracked-files=no)" ]; then echo "Pulled policies are up to date."; exit 0; fi
-          git -c user.name=github-actions[bot] -c user.email=41898282+github-actions[bot]@users.noreply.github.com \
-            commit -q -am "chore: pull the apps' policies ($(git rev-parse --short HEAD))" \
-            -m "Pulled by the deploy from the apps' own repos (pulled.txt)."
-          auth="Authorization: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 -w0)"
-          git -c "http.https://github.com/.extraheader=$auth" push -q origin HEAD:main \
-            || { git -c "http.https://github.com/.extraheader=$auth" pull -q --rebase origin main \
-                 && git -c "http.https://github.com/.extraheader=$auth" push -q origin HEAD:main; }
       - name: public/ is a clean build of src/
         run: python3 build.py --check
       - name: Stamp the commit into the footer
