@@ -17,6 +17,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+  actions: read
 concurrency:
   group: deploy
   cancel-in-progress: false
@@ -47,3 +48,12 @@ jobs:
         run: .flarepress/tools/wrangler.sh "$GITHUB_WORKSPACE/site" deploy
       - name: Live matches public/
         run: site/verify.sh
+      - name: Report
+        if: always()
+        continue-on-error: true
+        uses: pdxfixit/flarepress/ci@v1
+        with:
+          status: ${{ job.status }}
+          endpoint: ${{ vars.CI_ENDPOINT }}
+          key: ${{ secrets.CI_EVENTS_KEY }}
+          ntfy-topic: ${{ secrets.NTFY_TOPIC }}
